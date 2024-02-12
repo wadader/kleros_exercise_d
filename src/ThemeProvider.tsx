@@ -1,16 +1,16 @@
-import { MantineProvider, MantineThemeOverride } from '@mantine/core';
-
-export const theme: MantineThemeOverride = {
-  colorScheme: 'dark',
-};
+import { MantineProvider, createTheme } from "@mantine/core";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
+const theme = createTheme({
+  /** Your theme override here */
+});
+
 export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       {children}
     </MantineProvider>
   );
