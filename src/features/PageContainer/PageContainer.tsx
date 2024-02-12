@@ -1,7 +1,16 @@
-import { AppShell, Burger, Group, Skeleton } from "@mantine/core";
+import {
+  AppShell,
+  Burger,
+  Center,
+  Container,
+  Group,
+  Skeleton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { PropsWithChildren } from "react";
 
-function Home() {
+function PageContainer({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure();
 
   return (
@@ -13,7 +22,6 @@ function Home() {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          {/* <MantineLogo size={30} /> */}
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
@@ -24,9 +32,16 @@ function Home() {
             <Skeleton key={index} h={28} mt="sm" animate={false} />
           ))}
       </AppShell.Navbar>
-      <AppShell.Main>Main</AppShell.Main>
+      <AppShell.Main>
+        <Container fluid>
+          <Center>
+            <ConnectButton />
+            {children}
+          </Center>
+        </Container>
+      </AppShell.Main>
     </AppShell>
   );
 }
 
-export default Home;
+export default PageContainer;
