@@ -5,7 +5,7 @@ import { sepolia } from "viem/chains";
 import { env_Vars } from "../config/env";
 import { http } from "wagmi";
 
-export const config = getDefaultConfig({
+export const wagmiConfig = getDefaultConfig({
   appName: "Rock Paper Scissors Lizard Spock",
   projectId: env_Vars.WALLET_CONNECT_PROJECT_ID,
   chains: [sepolia],

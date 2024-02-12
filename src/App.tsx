@@ -5,7 +5,7 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 
 import { ThemeProvider } from "./ThemeProvider";
 import { createdRouter } from "./routes/routes";
-import { config } from "./RainbowkitConfig/RainbowkitConfig";
+import { wagmiConfig } from "./RainbowkitConfig/RainbowkitConfig";
 
 import "@mantine/core/styles.css";
 
@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={darkTheme()}>
           <ThemeProvider>

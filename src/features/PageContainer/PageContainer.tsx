@@ -9,6 +9,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren } from "react";
+import { Outlet } from "react-router-dom";
 
 function PageContainer({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure();
@@ -36,8 +37,10 @@ function PageContainer({ children }: PropsWithChildren) {
         <Container fluid>
           <Center>
             <ConnectButton />
-            {children}
           </Center>
+          <Container>
+            <Outlet />
+          </Container>
         </Container>
       </AppShell.Main>
     </AppShell>
