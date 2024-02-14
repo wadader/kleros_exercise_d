@@ -1,4 +1,5 @@
 import { MantineProvider, createTheme } from "@mantine/core";
+import "@mantine/core/styles.css";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
