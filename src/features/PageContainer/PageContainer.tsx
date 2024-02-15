@@ -5,6 +5,7 @@ import {
   Container,
   Group,
   LoadingOverlay,
+  NavLink,
   Skeleton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -12,6 +13,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren } from "react";
 import { Outlet } from "react-router-dom";
 import useWalletInteractionStore from "../../store/walletInteraction";
+import InternalNavLink from "../InternalNavLink/InternalNavLink";
+import { InternalLinksArr } from "./InternalLinks/InternalLinks";
 
 function PageContainer({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure();
@@ -31,12 +34,9 @@ function PageContainer({ children }: PropsWithChildren) {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={false} />
-          ))}
+        {InternalLinksArr.map((link) => (
+          <InternalNavLink to={link.to} label={link.label} />
+        ))}
       </AppShell.Navbar>
       <AppShell.Main>
         <Container fluid pos="relative">

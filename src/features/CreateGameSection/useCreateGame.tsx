@@ -7,6 +7,7 @@ import ky from "ky";
 import { BACKEND } from "../../config/config";
 import { encodePacked, keccak256, parseGwei, toHex } from "viem";
 import useWalletInteractionStore from "../../store/walletInteraction";
+import useGameStore from "../../store/game";
 
 function useCreateGame(createGameArgs: UseCreateGameArgs) {
   const [createGameTxHash, setCreateGameTxHash] = useState<Hash>();
@@ -37,6 +38,8 @@ function useCreateGame(createGameArgs: UseCreateGameArgs) {
 
       const response = await createGameBackendReference(createdTxHash, salt);
       console.log("response:", response);
+      useGameStore.getState().setters.salt(salt);
+      useGameStore.getState().setters.identifier(response.creatorIdentifier);
       setCreateGameTxHash(createdTxHash);
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {
@@ -101,6 +104,7 @@ interface CreateGameReqBody {
 interface CreateGameResponse {
   ok: true;
   message: "game record saved";
+  creatorIdentifier: string;
 }
 
 interface GenerateSaltResponse {
