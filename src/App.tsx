@@ -15,14 +15,14 @@ import useSiweAuth from "./RainbowkitConfig/RainbowKitAuth";
 const queryClient = new QueryClient();
 
 export default function App() {
-  const { status, authenticationAdapter } = useSiweAuth();
+  const { authenticationStatus, authenticationAdapter } = useSiweAuth();
 
   return (
     <WagmiProvider config={wagmiProviderConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
-          status={status}
+          status={authenticationStatus}
         >
           <RainbowKitProvider theme={darkTheme()}>
             <ThemeProvider>
