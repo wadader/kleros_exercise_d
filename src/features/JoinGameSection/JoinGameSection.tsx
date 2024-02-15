@@ -6,6 +6,8 @@ import { INPUTS } from "./consts";
 import useSiweStore from "../../store/siwe";
 import useJoinGame from "./useJoinGame";
 import useGameStore from "../../store/game";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function JoinGameSection() {
   const createValues = useCreateValues();
@@ -24,6 +26,12 @@ function JoinGameSection() {
   const isAuthenticated = authenticationStatus === "authenticated";
 
   const canJoinGame = Boolean(isAuthenticated);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!canJoinGame) navigate("/");
+  }, [canJoinGame, navigate]);
 
   return (
     <Stack my={20}>
