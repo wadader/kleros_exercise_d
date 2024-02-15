@@ -4,15 +4,20 @@ import {
   Center,
   Container,
   Group,
+  LoadingOverlay,
   Skeleton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren } from "react";
 import { Outlet } from "react-router-dom";
+import useWalletInteractionStore from "../../store/walletInteraction";
 
 function PageContainer({ children }: PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure();
+  const isInteractingWithWallet = useWalletInteractionStore(
+    (state) => state.isInteractingWithWallet
+  );
 
   return (
     <AppShell
@@ -34,7 +39,8 @@ function PageContainer({ children }: PropsWithChildren) {
           ))}
       </AppShell.Navbar>
       <AppShell.Main>
-        <Container fluid>
+        <Container fluid pos="relative">
+          <LoadingOverlay visible={isInteractingWithWallet} />
           <Center>
             <ConnectButton />
           </Center>

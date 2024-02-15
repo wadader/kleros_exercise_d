@@ -1,5 +1,3 @@
-import { ComboboxItem } from "@mantine/core";
-
 export enum Move {
   Null,
   Rock,

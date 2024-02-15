@@ -5,7 +5,7 @@ import { INPUTS } from "./consts";
 
 function useCreateValues() {
   const [stakeState, setStakeState] = useState<string | number>(0);
-  const [competitorAddress, setCompetitorAddress] = useState("");
+  const [joinerAddress, setJoinerAddress] = useState<string>("");
   const [moveState, setMoveState] = useState<Move>(Move.Rock);
 
   const stake = {
@@ -14,8 +14,8 @@ function useCreateValues() {
   } as const;
 
   const competitor = {
-    value: competitorAddress,
-    setter: setCompetitorAddress,
+    value: joinerAddress,
+    setter: setJoinerAddress,
   } as const;
 
   function updateMoveState(_moveOption: string | null) {
@@ -29,7 +29,7 @@ function useCreateValues() {
   } as const;
 
   let competitorAddressError: string | undefined;
-  if (competitorAddress && !isEthAddress(competitorAddress))
+  if (joinerAddress && !isEthAddress(joinerAddress))
     competitorAddressError = INPUTS.competitor.errors.invalidAddress;
 
   const validationErrors = {
