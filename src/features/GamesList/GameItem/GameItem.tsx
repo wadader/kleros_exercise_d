@@ -1,5 +1,6 @@
 import { Button, Center, Text } from "@mantine/core";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import type { NavigateFunction } from "react-router-dom";
 import useGameStore from "../../../store/game";
 import { isEthAddress } from "../../../types/identifier";
 
@@ -7,7 +8,11 @@ function GameItem({ contractAddress }: GameItemProps) {
   const navigate = useNavigate();
   return (
     <Center>
-      <Button onClick={() => selectContract(contractAddress, navigate)}>
+      <Button
+        onClick={() => {
+          selectContract(contractAddress, navigate);
+        }}
+      >
         <Text>{contractAddress}</Text>
       </Button>
     </Center>

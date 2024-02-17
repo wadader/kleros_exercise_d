@@ -1,4 +1,4 @@
-import { Card, Container, Stack, Text } from "@mantine/core";
+import { Container, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import ky from "ky";
 import { BACKEND } from "../../config/config";
@@ -8,13 +8,9 @@ import useSiweStore from "../../store/siwe";
 
 function GamesList() {
   const { address } = useAccount();
-  const {
-    isLoading,
-    error,
-    data: gamesResponse,
-  } = useQuery({
+  const { data: gamesResponse } = useQuery({
     queryKey: ["games-list", address],
-    queryFn: () => getGamesList(address),
+    queryFn: async () => await getGamesList(address),
   });
 
   console.log("gamesResponse:", gamesResponse);
@@ -29,9 +25,12 @@ function GamesList() {
   return (
     <Stack mt={50}>
       {isSignedIn ? (
-        games ? (
+        games !== undefined ? (
           games.map((game) => (
-            <GameItem contractAddress={game.contractAddress} />
+            <GameItem
+              key={game.contractAddress}
+              contractAddress={game.contractAddress}
+            />
           ))
         ) : (
           <Container>
@@ -51,7 +50,7 @@ export default GamesList;
 
 async function getGamesList(joinerAddress: string | undefined) {
   try {
-    if (!joinerAddress) throw "not logged in";
+    if (joinerAddress === undefined) throw new Error("not logged in");
     return await gameApi
       .get(`game?joinerAddress=${joinerAddress}`)
       .json<getGamesListResponse>();
