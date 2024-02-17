@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Move, isValidMove } from "../../types/game";
+import { isValidMove } from "../../types/game";
 import { isEthAddress } from "../../types/identifier";
-import { INPUTS } from "./consts";
+import useGameStore from "../../store/game";
+import { INPUTS } from "../consts";
 
 function useCreateValues() {
   const [stakeState, setStakeState] = useState<string | number>(0);
   const [joinerAddress, setJoinerAddress] = useState<string>("");
-  const [moveState, setMoveState] = useState<Move>(Move.Rock);
+  const moveState = useGameStore((state) => state.values.creatorMove);
+  const setMoveState = useGameStore((state) => state.setters.creatorMove);
 
   const stake = {
     value: stakeState,
@@ -20,7 +22,9 @@ function useCreateValues() {
 
   function updateMoveState(_moveOption: string | null) {
     const move = Number(_moveOption);
-    if (isValidMove(move)) setMoveState(move);
+    if (isValidMove(move)) {
+      setMoveState(move);
+    }
   }
 
   const move = {
@@ -29,7 +33,7 @@ function useCreateValues() {
   } as const;
 
   let competitorAddressError: string | undefined;
-  if (joinerAddress && !isEthAddress(joinerAddress))
+  if (joinerAddress !== undefined && !isEthAddress(joinerAddress))
     competitorAddressError = INPUTS.competitor.errors.invalidAddress;
 
   const validationErrors = {

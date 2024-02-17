@@ -8,12 +8,15 @@ import {
   TextInput,
 } from "@mantine/core";
 import useCreateValues from "./useCreateValues";
-import { moves } from "../../types/game";
-import { INPUTS } from "./consts";
-import useCreateGame, { UseCreateGameArgs } from "./useCreateGame";
+import { Move, moves } from "../../types/game";
+import useCreateGame from "./useCreateGame";
+import type { UseCreateGameArgs } from "./useCreateGame";
+
 import { isEthAddress } from "../../types/identifier";
 import useSiweStore from "../../store/siwe";
 import { parseEther } from "viem";
+import { INPUTS } from "../consts";
+import { useNavigate } from "react-router-dom";
 
 function CreateGameSection() {
   const createValues = useCreateValues();
@@ -22,12 +25,19 @@ function CreateGameSection() {
 
   const createGameArgs = getCreateGameArgs(createValues);
 
-  const { createGame, createGameTxHash } = useCreateGame(createGameArgs);
+  const navigate = useNavigate();
+
+  const { createGame, createGameTxHash } = useCreateGame(
+    createGameArgs,
+    navigate
+  );
 
   const { authenticationStatus } = useSiweStore();
   const isAuthenticated = authenticationStatus === "authenticated";
 
-  const canCreateGame = Boolean(createGameArgs && isAuthenticated);
+  const canCreateGame = Boolean(
+    createGameArgs !== undefined && isAuthenticated
+  );
 
   return (
     <Stack>
@@ -46,7 +56,9 @@ function CreateGameSection() {
         label={INPUTS.competitor.label}
         description={INPUTS.competitor.description}
         placeholder={INPUTS.competitor.placeholder}
-        onChange={(e) => competitor.setter(e.target.value)}
+        onChange={(e) => {
+          competitor.setter(e.target.value);
+        }}
         value={competitor.value}
         error={validationErrors.competitorAddressError}
       />
@@ -63,7 +75,7 @@ function CreateGameSection() {
         Create Game
       </Button>
 
-      {createGameTxHash && (
+      {createGameTxHash !== undefined && (
         <Center>
           <Text>Create Game Tx Hash:{createGameTxHash}</Text>
         </Center>
@@ -81,10 +93,14 @@ function getCreateGameArgs({
 }: CreateGameValues): UseCreateGameArgs {
   const joinerAddress = competitor.value;
 
-  if (joinerAddress && isEthAddress(joinerAddress))
+  if (
+    joinerAddress !== undefined &&
+    isEthAddress(joinerAddress) &&
+    move.value !== Move.Null
+  )
     return {
       move: move.value,
-      joinerAddress: joinerAddress,
+      joinerAddress,
       value: parseEther(String(stake.value)),
     };
 }

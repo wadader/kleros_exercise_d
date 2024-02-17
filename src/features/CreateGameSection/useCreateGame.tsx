@@ -1,22 +1,30 @@
 import { useWalletClient } from "wagmi";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
-import { Move } from "../../types/game";
-import { EthAddress, Hash, isHash } from "../../types/identifier";
+import type { Move } from "../../types/game";
+import type { EthAddress, Hash } from "../../types/identifier";
+import { isHash } from "../../types/identifier";
+
 import { useState } from "react";
 import ky from "ky";
-import { BACKEND } from "../../config/config";
-import { encodePacked, keccak256, parseGwei, toHex } from "viem";
+import { BACKEND, saltApi } from "../../config/config";
+import { encodePacked, keccak256 } from "viem";
 import useWalletInteractionStore from "../../store/walletInteraction";
 import useGameStore from "../../store/game";
+import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
+import type { NavigateFunction } from "react-router-dom";
 
-function useCreateGame(createGameArgs: UseCreateGameArgs) {
+function useCreateGame(
+  createGameArgs: UseCreateGameArgs,
+  navigate: NavigateFunction
+) {
   const [createGameTxHash, setCreateGameTxHash] = useState<Hash>();
   const { data: walletClient } = useWalletClient();
 
   async function createGame() {
+    console.table({ walletClient, createGameArgs });
     try {
       useWalletInteractionStore.getState().setStartInteraction();
-      if (!walletClient || !createGameArgs) return;
+      if (walletClient === undefined || createGameArgs === undefined) return;
 
       const { move, joinerAddress, value } = createGameArgs;
 
@@ -25,13 +33,14 @@ function useCreateGame(createGameArgs: UseCreateGameArgs) {
       const { abi, bytecode, gasEstimates } = RPS_ARTIFACT;
       const createdTxHash = await walletClient.deployContract({
         abi,
-        bytecode: bytecode,
+        bytecode,
         args: [hashedMove, joinerAddress],
         value,
         gas: BigInt(Number(gasEstimates.creation.totalCost) * 2),
       });
       if (!isHash(createdTxHash)) {
-        return console.error("hash not as expected. Report error");
+        console.error("hash not as expected. Report error");
+        return;
       }
 
       console.log("createdTxHash:", createdTxHash);
@@ -40,8 +49,12 @@ function useCreateGame(createGameArgs: UseCreateGameArgs) {
       console.log("response:", response);
       useGameStore.getState().setters.salt(salt);
       useGameStore.getState().setters.identifier(response.creatorIdentifier);
+      useGameStore
+        .getState()
+        .setters.selectedContract(response.createdGameAddress);
       setCreateGameTxHash(createdTxHash);
       useWalletInteractionStore.getState().setHasExitedInteraction();
+      navigate("/solve");
     } catch (e) {
       console.error("createGame-error", e);
       useWalletInteractionStore.getState().setHasExitedInteraction();
@@ -74,14 +87,12 @@ async function createGameBackendReference(
     salt,
   };
   return await gameApi
-    .post("game", { json: createGameReqBody, timeout: TIMEOUT })
+    .post("game", {
+      json: createGameReqBody,
+      timeout: BACKEND_REFERENCE_TIMEOUT,
+    })
     .json<CreateGameResponse>();
 }
-
-const saltApi = ky.create({
-  prefixUrl: `${BACKEND}/salt`,
-  credentials: "include",
-});
 
 const gameApi = ky.create({
   prefixUrl: `${BACKEND}/game`,
@@ -105,11 +116,9 @@ interface CreateGameResponse {
   ok: true;
   message: "game record saved";
   creatorIdentifier: string;
+  createdGameAddress: EthAddress;
 }
 
 interface GenerateSaltResponse {
   salt: string;
 }
-
-const TWO_MINUTES = 120000;
-const TIMEOUT = TWO_MINUTES;
