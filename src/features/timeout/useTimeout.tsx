@@ -7,7 +7,7 @@ import { useDelay } from "react-use-precision-timer";
 //  and enable the timeout option after the delay
 
 function useTimeout(
-  lastActionInSeconds: bigint,
+  lastActionInSeconds: number,
   timeoutPeriodInSeconds: number
 ) {
   const [hasTimedOut, setHasTimedOut] = useState(false);
@@ -26,9 +26,9 @@ function useTimeout(
   return { hasTimedOut };
 }
 
-const TEN_SECONDS = 10_000;
+const FITEEN_SECONDS = 15_000;
 
 // block.timestamp is accurate to ~10 seconds, so we have a bit of a buffer
-const bufferTime = TEN_SECONDS;
+const bufferTime = FITEEN_SECONDS;
 
 export default useTimeout;
