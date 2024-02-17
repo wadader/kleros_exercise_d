@@ -1,4 +1,4 @@
-import { Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 
 export interface Game_ServerToClientEvents {
   "game:joiner-played": () => void;

@@ -1,4 +1,4 @@
-import { GameSocket } from "./types";
+import type { GameSocket } from "./types";
 import { io } from "socket.io-client";
 import { SOCKET_URL } from "../../config/config";
 

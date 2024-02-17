@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import useGameStore from "../../store/game";
 import { headToHeadSocket } from "./socket";
 
-function useJoinerSocket() {
+function useJoinerSocket():void {
   useEffect(() => {
     const identifier = useGameStore().values.identifier;
-    if (!identifier) return;
+    if (identifier===undefined) return;
     headToHeadSocket.connect();
     headToHeadSocket.emit("game:joiner:joined", identifier);
 
-    function onSolved() {
+    function onSolved():void {
       console.log("creator-solved");
     }
 
