@@ -18,6 +18,7 @@ import useSolveGame, { SolveGameArgs } from "./useSolveGame";
 import useSolveGameValues from "./useSolveGameValues";
 import useCreatorSocket from "./useCreatorSocket";
 import useTimeout from "../timeout/useTimeout";
+import useTimeoutInactiveJoiner from "./useTimeoutInactiveJoiner";
 
 function SolveGameSection() {
   const [canEdit, setCanEdit] = useState(false);
@@ -42,6 +43,8 @@ function SolveGameSection() {
   };
 
   const { solveGame, winner } = useSolveGame(solveGameArgs);
+  const { timeoutInactiveJoiner, hasJoinerTimedOut } =
+    useTimeoutInactiveJoiner(selectedContract);
 
   const { hasTimedOut } = useTimeout(lastAction, CONTRACT_TIMEOUT);
 
@@ -147,7 +150,9 @@ function SolveGameSection() {
           </Button>
         </Center>
       </Container>
-      <Button disabled={!canTimeout}>Claim Timeout</Button>
+      <Button disabled={!canTimeout} onClick={timeoutInactiveJoiner}>
+        Claim Timeout
+      </Button>
     </Stack>
   );
 }
