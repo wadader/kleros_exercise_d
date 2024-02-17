@@ -6,6 +6,7 @@ import { isHash, type EthAddress, EthHash } from "../../types/identifier";
 import { gameApi } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT as BACKEND_TIMEOUT } from "../consts";
 import { useState } from "react";
+import { GameOverReqBody } from "./useTimeoutInactiveJoiner";
 
 function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
   const [winner, setWinner] = useState<Winner>();
@@ -108,9 +109,4 @@ interface SolveGameReqBody extends GameOverReqBody {
     move: Moves;
     salt: string;
   };
-}
-
-interface GameOverReqBody {
-  contractAddress: EthAddress;
-  gameEndTxHash: EthHash;
 }
