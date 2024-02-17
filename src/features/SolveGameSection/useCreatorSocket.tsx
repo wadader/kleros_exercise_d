@@ -4,6 +4,7 @@ import { headToHeadSocket } from "../socket/socket";
 
 function useCreatorSocket() {
   const [hasJoinerPlayed, setHasJoinerPlayed] = useState(false);
+  const [hasCreatorTimedOut, setHasCreatorTimedOut] = useState(false);
 
   const identifier = useGameStore().values.identifier;
 
@@ -17,14 +18,20 @@ function useCreatorSocket() {
       setHasJoinerPlayed(true);
     }
 
+    function onCreatorTimedOut() {
+      setHasCreatorTimedOut(true);
+    }
+
     headToHeadSocket.on("game:joiner-played", onPlayed);
+    headToHeadSocket.on("game:joiner-creatorTimedOut", onCreatorTimedOut);
 
     return () => {
       headToHeadSocket.off("game:joiner-played", onPlayed);
+      headToHeadSocket.off("game:joiner-creatorTimedOut", onCreatorTimedOut);
     };
   }, [identifier]);
 
-  return { hasJoinerPlayed };
+  return { hasJoinerPlayed, hasCreatorTimedOut };
 }
 
 export default useCreatorSocket;
