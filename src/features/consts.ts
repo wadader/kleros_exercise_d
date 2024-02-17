@@ -1,4 +1,7 @@
-import { moves } from "../../types/game";
+import { moves } from "../types/game";
+
+const TWO_MINUTES = 120000;
+const BACKEND_REFERENCE_TIMEOUT = TWO_MINUTES;
 
 const INPUTS = {
   stake: {
@@ -19,6 +22,10 @@ const INPUTS = {
     description: "Which move do you want to play",
     data: moves,
   },
+  salt: {
+    label: "Salt Used",
+    description: "The salt used when the game was created",
+  },
 } as const;
 
-export { INPUTS };
+export { INPUTS, BACKEND_REFERENCE_TIMEOUT };
