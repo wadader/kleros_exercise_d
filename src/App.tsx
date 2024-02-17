@@ -9,7 +9,7 @@ import {
 
 import { ThemeProvider } from "./ThemeProvider";
 import { createdRouter } from "./routes/routes";
-import { wagmiProviderConfig } from "./RainbowkitConfig/RainbowkitConfig";
+import { getWagmiProviderConfig } from "./RainbowkitConfig/RainbowkitConfig";
 import useSiweAuth from "./RainbowkitConfig/RainbowKitAuth";
 
 const queryClient = new QueryClient();
@@ -18,7 +18,7 @@ export default function App() {
   const { authenticationStatus, authenticationAdapter } = useSiweAuth();
 
   return (
-    <WagmiProvider config={wagmiProviderConfig}>
+    <WagmiProvider config={getWagmiProviderConfig()}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
