@@ -1,7 +1,9 @@
 import { usePublicClient, useWalletClient } from "wagmi";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
-import { Move } from "../../types/game";
-import { EthAddress, Hash, isHash } from "../../types/identifier";
+import type { Move } from "../../types/game";
+import type { EthAddress, Hash } from "../../types/identifier";
+import { isHash } from "../../types/identifier";
+
 import useWalletInteractionStore from "../../store/walletInteraction";
 import { BACKEND } from "../../config/config";
 import ky from "ky";
@@ -14,7 +16,12 @@ function useJoinGame({ move, contractAddress }: JoinGameArgs) {
   async function joinGame() {
     try {
       useWalletInteractionStore.getState().setStartInteraction();
-      if (!publicClient || !contractAddress || !walletClient) return;
+      if (
+        publicClient === undefined ||
+        contractAddress === undefined ||
+        walletClient === undefined
+      )
+        return;
       const stake = await publicClient.readContract({
         abi: RPS_ARTIFACT.abi,
         address: contractAddress,
@@ -32,7 +39,8 @@ function useJoinGame({ move, contractAddress }: JoinGameArgs) {
       });
 
       if (!isHash(joinGameTxHash)) {
-        return console.error("hash not as expected. Report error");
+        console.error("hash not as expected. Report error");
+        return;
       }
 
       const res = joinGameBackendReference(joinGameTxHash, contractAddress);

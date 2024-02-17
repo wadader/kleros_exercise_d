@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Move, isValidMove } from "../../types/game";
-import { isEthAddress } from "../../types/identifier";
-import { INPUTS } from "./consts";
 
 function useCreateValues() {
   const [moveState, setMoveState] = useState<Move>(Move.Rock);

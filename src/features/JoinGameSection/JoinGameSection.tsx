@@ -1,13 +1,13 @@
 import { Button, Center, Select, Stack, Text } from "@mantine/core";
 import useCreateValues from "./useJoinValues";
 import { moves } from "../../types/game";
-import { INPUTS } from "./consts";
 
 import useSiweStore from "../../store/siwe";
 import useJoinGame from "./useJoinGame";
 import useGameStore from "../../store/game";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { INPUTS } from "../consts";
 
 function JoinGameSection() {
   const createValues = useCreateValues();
@@ -34,7 +34,7 @@ function JoinGameSection() {
   }, [canJoinGame, navigate]);
 
   return (
-    <Stack my={20}>
+    <Stack>
       <Center>
         <Text>Selected Contract:{selectedContract}</Text>
       </Center>
@@ -54,5 +54,3 @@ function JoinGameSection() {
 }
 
 export default JoinGameSection;
-
-type CreateGameValues = ReturnType<typeof useCreateValues>;
