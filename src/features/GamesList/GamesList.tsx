@@ -1,7 +1,6 @@
 import { Container, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import ky from "ky";
-import { BACKEND } from "../../config/config";
+import {  gameApi } from "../../config/config";
 import { useAccount } from "wagmi";
 import GameItem from "./GameItem/GameItem";
 import useSiweStore from "../../store/siwe";
@@ -12,8 +11,6 @@ function GamesList() {
     queryKey: ["games-list", address],
     queryFn: async () => await getGamesList(address),
   });
-
-  console.log("gamesResponse:", gamesResponse);
 
   const games = gamesResponse?.gamesForJoiner;
 
@@ -59,11 +56,6 @@ async function getGamesList(joinerAddress: string | undefined) {
     throw e;
   }
 }
-
-const gameApi = ky.create({
-  prefixUrl: `${BACKEND}/game`,
-  credentials: "include",
-});
 
 interface getGamesListResponse {
   gamesForJoiner: Games[];

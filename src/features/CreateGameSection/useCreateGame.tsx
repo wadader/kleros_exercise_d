@@ -1,12 +1,11 @@
 import { useWalletClient } from "wagmi";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
-import type { Move } from "../../types/game";
-import type { EthAddress, Hash } from "../../types/identifier";
+import type { Moves } from "../../types/game";
+import type { EthAddress, EthHash } from "../../types/identifier";
 import { isHash } from "../../types/identifier";
 
 import { useState } from "react";
-import ky from "ky";
-import { BACKEND, saltApi } from "../../config/config";
+import { gameApi, saltApi } from "../../config/config";
 import { encodePacked, keccak256 } from "viem";
 import useWalletInteractionStore from "../../store/walletInteraction";
 import useGameStore from "../../store/game";
@@ -17,11 +16,10 @@ function useCreateGame(
   createGameArgs: UseCreateGameArgs,
   navigate: NavigateFunction
 ) {
-  const [createGameTxHash, setCreateGameTxHash] = useState<Hash>();
+  const [createGameTxHash, setCreateGameTxHash] = useState<EthHash>();
   const { data: walletClient } = useWalletClient();
 
   async function createGame() {
-    console.table({ walletClient, createGameArgs });
     try {
       useWalletInteractionStore.getState().setStartInteraction();
       if (walletClient === undefined || createGameArgs === undefined) return;
@@ -42,8 +40,6 @@ function useCreateGame(
         console.error("hash not as expected. Report error");
         return;
       }
-
-      console.log("createdTxHash:", createdTxHash);
 
       const { createdGameAddress, creatorIdentifier, lastAction } =
         await createGameBackendReference(createdTxHash, salt);
@@ -71,7 +67,7 @@ async function generateSalt() {
   return await saltApi.post("salt").json<GenerateSaltResponse>();
 }
 
-async function getHashedMove(move: Move) {
+async function getHashedMove(move: Moves) {
   const { salt } = await generateSalt();
   const hashedMove = keccak256(
     encodePacked(["uint8", "uint256"], [move, BigInt(salt)])
@@ -80,7 +76,7 @@ async function getHashedMove(move: Move) {
 }
 
 async function createGameBackendReference(
-  gameCreationTxHash: Hash,
+  gameCreationTxHash: EthHash,
   salt: string
 ) {
   const createGameReqBody: CreateGameReqBody = {
@@ -95,21 +91,16 @@ async function createGameBackendReference(
     .json<CreateGameResponse>();
 }
 
-const gameApi = ky.create({
-  prefixUrl: `${BACKEND}/game`,
-  credentials: "include",
-});
-
 export type UseCreateGameArgs = CreateGameConstructorArgs | undefined;
 
 interface CreateGameConstructorArgs {
-  move: Move;
+  move: Moves;
   joinerAddress: EthAddress;
   value: bigint;
 }
 
 interface CreateGameReqBody {
-  gameCreationTxHash: Hash;
+  gameCreationTxHash: EthHash;
   salt: string;
 }
 
@@ -118,7 +109,7 @@ interface CreateGameResponse {
   message: "game record saved";
   creatorIdentifier: string;
   createdGameAddress: EthAddress;
-  lastAction: bigint;
+  lastAction: number;
 }
 
 interface GenerateSaltResponse {

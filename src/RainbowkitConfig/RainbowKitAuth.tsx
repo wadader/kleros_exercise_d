@@ -1,17 +1,8 @@
-import {
-  AuthenticationStatus,
-  createAuthenticationAdapter,
-} from "@rainbow-me/rainbowkit";
-import ky from "ky";
-import { SiweMessage } from "siwe";
-import { BACKEND } from "../config/config";
-import { useState } from "react";
-import useSiweStore from "../store/siwe";
+import { createAuthenticationAdapter } from "@rainbow-me/rainbowkit";
 
-const authApi = ky.create({
-  prefixUrl: `${BACKEND}/auth`,
-  credentials: "include",
-});
+import { SiweMessage } from "siwe";
+import useSiweStore from "../store/siwe";
+import { authApi } from "../config/config";
 
 function useSiweAuth() {
   // const [status, setStatus] = useState<AuthenticationStatus>("unauthenticated");

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Move, isValidMove } from "../../types/game";
+import { Moves, isValidMove } from "../../types/game";
 
 function useCreateValues() {
-  const [moveState, setMoveState] = useState<Move>(Move.Rock);
+  const [moveState, setMoveState] = useState<Moves>(Moves.Rock);
 
   function updateMoveState(_moveOption: string | null) {
     const move = Number(_moveOption);

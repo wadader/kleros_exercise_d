@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import useCreateValues from "./useCreateValues";
-import { Move, moves } from "../../types/game";
+import { Moves, moves } from "../../types/game";
 import useCreateGame from "./useCreateGame";
 import type { UseCreateGameArgs } from "./useCreateGame";
 
@@ -96,7 +96,7 @@ function getCreateGameArgs({
   if (
     joinerAddress !== undefined &&
     isEthAddress(joinerAddress) &&
-    move.value !== Move.Null
+    move.value !== Moves.Null
   )
     return {
       move: move.value,

@@ -1,12 +1,11 @@
 import { usePublicClient, useWalletClient } from "wagmi";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
-import type { Move } from "../../types/game";
-import type { EthAddress, Hash } from "../../types/identifier";
+import type { Moves } from "../../types/game";
+import type { EthAddress, EthHash } from "../../types/identifier";
 import { isHash } from "../../types/identifier";
 
 import useWalletInteractionStore from "../../store/walletInteraction";
-import { BACKEND } from "../../config/config";
-import ky from "ky";
+import { gameApi } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
 
 function useJoinGame({ move, contractAddress }: JoinGameArgs) {
@@ -28,8 +27,6 @@ function useJoinGame({ move, contractAddress }: JoinGameArgs) {
         functionName: "stake",
       });
 
-      console.log("stake:", stake);
-
       const joinGameTxHash = await walletClient.writeContract({
         address: contractAddress,
         abi: RPS_ARTIFACT.abi,
@@ -43,8 +40,7 @@ function useJoinGame({ move, contractAddress }: JoinGameArgs) {
         return;
       }
 
-      const res = joinGameBackendReference(joinGameTxHash, contractAddress);
-      console.log("res:", res);
+      const res = joinGameBackend(joinGameTxHash, contractAddress);
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {
       console.error("useJoinGame-error", e);
@@ -57,8 +53,8 @@ function useJoinGame({ move, contractAddress }: JoinGameArgs) {
 
 export default useJoinGame;
 
-async function joinGameBackendReference(
-  playGameTxHash: Hash,
+async function joinGameBackend(
+  playGameTxHash: EthHash,
   contractAddress: EthAddress
 ) {
   const joinGameReqBody: JoinGameReqBody = {
@@ -73,19 +69,14 @@ async function joinGameBackendReference(
     .json<JoinGameResponse>();
 }
 
-const gameApi = ky.create({
-  prefixUrl: `${BACKEND}/game`,
-  credentials: "include",
-});
-
 interface JoinGameArgs {
-  move: Move;
+  move: Moves;
   contractAddress: EthAddress | undefined;
 }
 
 interface JoinGameReqBody {
   contractAddress: EthAddress;
-  playGameTxHash: Hash;
+  playGameTxHash: EthHash;
 }
 
 interface JoinGameResponse {
