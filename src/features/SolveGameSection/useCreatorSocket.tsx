@@ -1,16 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useGameStore from "../../store/game";
-import { headToHeadSocket } from "./socket";
+import { headToHeadSocket } from "../socket/socket";
 
-function useCreatorSocket(): void {
+function useCreatorSocket() {
+  const [hasJoinerPlayed, setHasJoinerPlayed] = useState(false);
+
+  const identifier = useGameStore().values.identifier;
+
   useEffect(() => {
-    const identifier = useGameStore().values.identifier;
     if (identifier === undefined) return;
     headToHeadSocket.connect();
     headToHeadSocket.emit("game:creator:created", identifier);
 
     function onPlayed(): void {
-      console.log("joiner-played");
+      console.log("game:joiner-played");
+      setHasJoinerPlayed(true);
     }
 
     headToHeadSocket.on("game:joiner-played", onPlayed);
@@ -18,7 +22,9 @@ function useCreatorSocket(): void {
     return () => {
       headToHeadSocket.off("game:joiner-played", onPlayed);
     };
-  }, []);
+  }, [identifier]);
+
+  return { hasJoinerPlayed };
 }
 
 export default useCreatorSocket;

@@ -45,13 +45,14 @@ function useCreateGame(
 
       console.log("createdTxHash:", createdTxHash);
 
-      const response = await createGameBackendReference(createdTxHash, salt);
-      console.log("response:", response);
-      useGameStore.getState().setters.salt(salt);
-      useGameStore.getState().setters.identifier(response.creatorIdentifier);
-      useGameStore
-        .getState()
-        .setters.selectedContract(response.createdGameAddress);
+      const { createdGameAddress, creatorIdentifier, lastAction } =
+        await createGameBackendReference(createdTxHash, salt);
+      useGameStore.getState().saveCreatedGame({
+        salt,
+        creatorIdentifier,
+        createdTime: lastAction,
+        createdContractAddress: createdGameAddress,
+      });
       setCreateGameTxHash(createdTxHash);
       useWalletInteractionStore.getState().setHasExitedInteraction();
       navigate("/solve");
@@ -117,6 +118,7 @@ interface CreateGameResponse {
   message: "game record saved";
   creatorIdentifier: string;
   createdGameAddress: EthAddress;
+  lastAction: bigint;
 }
 
 interface GenerateSaltResponse {

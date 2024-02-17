@@ -12,23 +12,38 @@ const useGameStore = create<GameStore>()(
         identifier: undefined,
         selectedContract: undefined,
         creatorMove: Move.Null,
+        lastAction: 0n,
+      },
+
+      saveCreatedGame: ({
+        salt,
+        creatorIdentifier,
+        createdContractAddress: selectedContract,
+        createdTime,
+      }) => {
+        set((state) => {
+          state.values.salt = salt;
+          state.values.identifier = creatorIdentifier;
+          state.values.selectedContract = selectedContract;
+          state.values.lastAction = createdTime;
+        });
       },
       setters: {
-        salt: (newSalt) => {
-          set((state) => {
-            state.values.salt = newSalt;
-          });
-        },
-        identifier: (newIdentifier) => {
-          set((state) => {
-            state.values.identifier = newIdentifier;
-          });
-        },
-        selectedContract: (newSelectedContract) => {
-          set((state) => {
-            state.values.selectedContract = newSelectedContract;
-          });
-        },
+          salt: (newSalt) => {
+            set((state) => {
+              state.values.salt = newSalt;
+            });
+          },
+        //   identifier: (newIdentifier) => {
+        //     set((state) => {
+        //       state.values.identifier = newIdentifier;
+        //     });
+        //   },
+          selectedContract: (newSelectedContract) => {
+            set((state) => {
+              state.values.selectedContract = newSelectedContract;
+            });
+          },
         creatorMove: (selectedMove) => {
           set((state) => {
             state.values.creatorMove = selectedMove;
@@ -48,11 +63,21 @@ interface GameStore {
     identifier: string | undefined;
     selectedContract: EthAddress | undefined;
     creatorMove: Move;
+    lastAction: bigint;
   };
+
   setters: {
     salt: (newSalt: string) => void;
-    identifier: (newIdentifier: string) => void;
+    // identifier: (newIdentifier: string) => void;
     selectedContract: (newSelectedContract: EthAddress) => void;
     creatorMove: (move: Move) => void;
   };
+  saveCreatedGame: (createdGameDetails: CreatedGameDetails) => void;
+}
+
+interface CreatedGameDetails {
+  salt: string;
+  creatorIdentifier: string;
+  createdContractAddress: EthAddress;
+  createdTime: bigint;
 }

@@ -1,9 +1,11 @@
 import {
   Button,
   Center,
+  Container,
   Select,
   Stack,
   Switch,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -14,23 +16,30 @@ import { INPUTS } from "../consts";
 import { saltApi } from "../../config/config";
 import { useNavigate } from "react-router-dom";
 import useSolveGame, { SolveGameArgs } from "./useSolveGame";
+import useSolveGameValues from "./useSolveGameValues";
+import useCreatorSocket from "./useCreatorSocket";
 
 function SolveGameSection() {
   const [canEdit, setCanEdit] = useState(false);
 
-  const savedMovedState = useGameStore((state) => state.values.creatorMove);
-  const setMoveState = useGameStore((state) => state.setters.creatorMove);
-  const savedSalt = useGameStore((state) => state.values.salt);
-  const setSalt = useGameStore((state) => state.setters.salt);
-  const selectedContract = useGameStore(
-    (state) => state.values.selectedContract
-  );
+  const {
+    savedMovedState,
+    setMoveState,
+    savedSalt,
+    setSalt,
+    selectedContract,
+  } = useSolveGameValues();
+
+  const { hasJoinerPlayed } = useCreatorSocket();
+
+  const navigate = useNavigate();
 
   const solveGameArgs: SolveGameArgs = {
     move: savedMovedState,
     salt: savedSalt,
     contractAddress: selectedContract,
   };
+
   const { solveGame } = useSolveGame(solveGameArgs);
 
   function enableEdit() {
@@ -53,8 +62,6 @@ function SolveGameSection() {
   }
 
   const noSavedSalt = savedSalt === undefined || savedSalt === "";
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     console.log();
@@ -123,8 +130,14 @@ function SolveGameSection() {
         />
       </Center>
 
-      <Button onClick={solveGame}>Solve</Button>
-
+      <Container>
+        <Text> Disabled until joiner plays</Text>
+        <Center>
+          <Button onClick={solveGame} disabled={!hasJoinerPlayed} my={10}>
+            Solve
+          </Button>
+        </Center>
+      </Container>
       <Button>Claim Timeout</Button>
     </Stack>
   );

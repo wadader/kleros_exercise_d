@@ -9,10 +9,6 @@ function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
   const publicClient = usePublicClient();
 
   async function solveGame() {
-    console.table({ contractAddress, salt });
-    console.log("walletClient:", walletClient);
-    console.log("publicClient:", publicClient);
-
     try {
       useWalletInteractionStore.getState().setStartInteraction();
       if (
