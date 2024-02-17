@@ -19,6 +19,6 @@
       "@test-utils": ["./test-utils"]
     }
   },
-  "include": ["src", "test-utils"],
+  "include": ["src", "test-utils", ".eslintrc.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
