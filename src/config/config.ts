@@ -21,6 +21,16 @@ const saltApi = ky.create({
   credentials: "include",
 });
 
-export { BACKEND, SOCKET_URL, saltApi };
+const gameApi = ky.create({
+  prefixUrl: `${BACKEND}/game`,
+  credentials: "include",
+});
+
+const authApi = ky.create({
+  prefixUrl: `${BACKEND}/auth`,
+  credentials: "include",
+});
+
+export {  SOCKET_URL, saltApi, gameApi, authApi };
 
 type Mode = "development";

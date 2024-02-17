@@ -1,4 +1,4 @@
-export enum Move {
+export enum Moves {
   Null,
   Rock,
   Paper,
@@ -7,16 +7,16 @@ export enum Move {
   Lizard,
 }
 
-export function isValidMove(moveOption: number | null): moveOption is Move {
+export function isValidMove(moveOption: number | null): moveOption is Moves {
   if (moveOption === null) return false;
-  if (moveOption in Move) return true;
+  if (moveOption in Moves) return true;
   return false;
 }
 
 export const moves = [
-  { value: String(Move.Rock), label: "Rock" },
-  { value: String(Move.Paper), label: "Paper" },
-  { value: String(Move.Scissors), label: "Scissors" },
-  { value: String(Move.Spock), label: "Spock" },
-  { value: String(Move.Lizard), label: "Lizard" },
+  { value: String(Moves.Rock), label: "Rock" },
+  { value: String(Moves.Paper), label: "Paper" },
+  { value: String(Moves.Scissors), label: "Scissors" },
+  { value: String(Moves.Spock), label: "Spock" },
+  { value: String(Moves.Lizard), label: "Lizard" },
 ] as const;

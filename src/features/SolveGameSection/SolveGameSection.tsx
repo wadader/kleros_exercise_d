@@ -10,14 +10,14 @@ import {
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import useGameStore from "../../store/game";
-import { Move, isValidMove, moves } from "../../types/game";
-import { INPUTS } from "../consts";
+import { Moves, isValidMove, moves } from "../../types/game";
+import { CONTRACT_TIMEOUT, INPUTS } from "../consts";
 import { saltApi } from "../../config/config";
 import { useNavigate } from "react-router-dom";
 import useSolveGame, { SolveGameArgs } from "./useSolveGame";
 import useSolveGameValues from "./useSolveGameValues";
 import useCreatorSocket from "./useCreatorSocket";
+import useTimeout from "../timeout/useTimeout";
 
 function SolveGameSection() {
   const [canEdit, setCanEdit] = useState(false);
@@ -28,6 +28,7 @@ function SolveGameSection() {
     savedSalt,
     setSalt,
     selectedContract,
+    lastAction,
   } = useSolveGameValues();
 
   const { hasJoinerPlayed } = useCreatorSocket();
@@ -40,7 +41,9 @@ function SolveGameSection() {
     contractAddress: selectedContract,
   };
 
-  const { solveGame } = useSolveGame(solveGameArgs);
+  const { solveGame, winner } = useSolveGame(solveGameArgs);
+
+  const { hasTimedOut } = useTimeout(lastAction, CONTRACT_TIMEOUT);
 
   function enableEdit() {
     if (canEdit) return;
@@ -62,11 +65,12 @@ function SolveGameSection() {
   }
 
   const noSavedSalt = savedSalt === undefined || savedSalt === "";
+  const canTimeout = hasTimedOut && !hasJoinerPlayed;
 
   useEffect(() => {
     console.log();
 
-    if (savedMovedState === Move.Null || selectedContract === undefined)
+    if (savedMovedState === Moves.Null || selectedContract === undefined)
       navigate("/");
 
     const getSaltController = new AbortController();
@@ -100,8 +104,13 @@ function SolveGameSection() {
   return (
     <Stack>
       <Center>
-        <Title order={2}>{selectedContract}</Title>
+        <Title order={3}>{selectedContract}</Title>
       </Center>
+      {winner !== undefined && (
+        <Center>
+          <Text>{winner}</Text>
+        </Center>
+      )}
       <Select
         label={INPUTS.moves.label}
         description={INPUTS.moves.description}
@@ -138,7 +147,7 @@ function SolveGameSection() {
           </Button>
         </Center>
       </Container>
-      <Button>Claim Timeout</Button>
+      <Button disabled={!canTimeout}>Claim Timeout</Button>
     </Stack>
   );
 }

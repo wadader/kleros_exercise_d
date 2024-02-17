@@ -1,9 +1,9 @@
 import { isAddress } from "ethers/lib/utils";
 
-type Hash = `0x${string & { length: 64 }}`;
+type EthHash = `0x${string & { length: 64 }}`;
 type EthAddress = `0x${string & { length: 40 }}`;
 
-function isHash(value: string): value is Hash {
+function isEthHash(value: string): value is EthHash {
   return /^0x[a-fA-F0-9]{64}$/.test(value);
 }
 
@@ -11,6 +11,6 @@ function isEthAddress(value: string): value is EthAddress {
   return isAddress(value);
 }
 
-export { isEthAddress, isHash };
+export { isEthAddress, isEthHash as isHash };
 
-export type { Hash, EthAddress };
+export type { EthHash, EthAddress };

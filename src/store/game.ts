@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type { EthAddress } from "../types/identifier";
-import { Move } from "../types/game";
+import { Moves } from "../types/game";
 
 const useGameStore = create<GameStore>()(
   persist(
@@ -11,8 +11,8 @@ const useGameStore = create<GameStore>()(
         salt: undefined,
         identifier: undefined,
         selectedContract: undefined,
-        creatorMove: Move.Null,
-        lastAction: 0n,
+        creatorMove: Moves.Null,
+        lastAction: 0,
       },
 
       saveCreatedGame: ({
@@ -62,15 +62,15 @@ interface GameStore {
     salt: string | undefined;
     identifier: string | undefined;
     selectedContract: EthAddress | undefined;
-    creatorMove: Move;
-    lastAction: bigint;
+    creatorMove: Moves;
+    lastAction: number;
   };
 
   setters: {
     salt: (newSalt: string) => void;
     // identifier: (newIdentifier: string) => void;
     selectedContract: (newSelectedContract: EthAddress) => void;
-    creatorMove: (move: Move) => void;
+    creatorMove: (move: Moves) => void;
   };
   saveCreatedGame: (createdGameDetails: CreatedGameDetails) => void;
 }
@@ -79,5 +79,5 @@ interface CreatedGameDetails {
   salt: string;
   creatorIdentifier: string;
   createdContractAddress: EthAddress;
-  createdTime: bigint;
+  createdTime: number;
 }

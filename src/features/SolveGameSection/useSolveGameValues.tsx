@@ -8,6 +8,7 @@ function useSolveGameValues() {
   const selectedContract = useGameStore(
     (state) => state.values.selectedContract
   );
+  const lastAction = useGameStore((state) => state.values.lastAction);
 
   return {
     savedMovedState,
@@ -15,6 +16,7 @@ function useSolveGameValues() {
     savedSalt,
     setSalt,
     selectedContract,
+    lastAction,
   };
 }
 

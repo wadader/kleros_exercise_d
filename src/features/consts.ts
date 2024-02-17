@@ -1,7 +1,12 @@
 import { moves } from "../types/game";
 
-const TWO_MINUTES = 120000;
-const BACKEND_REFERENCE_TIMEOUT = TWO_MINUTES;
+const ONE_MINUTE_IN_MILLISECONDS = 120_000;
+const FIVE_MINUTES_IN_MILLISECONDS = 300_000;
+
+// as the contract TIMEOUT is fixed, I am declaring the value here as a const. For a varying value, I could fetch from the contract when using it;
+const CONTRACT_TIMEOUT = FIVE_MINUTES_IN_MILLISECONDS;
+
+const BACKEND_REFERENCE_TIMEOUT = ONE_MINUTE_IN_MILLISECONDS;
 
 const INPUTS = {
   stake: {
@@ -28,4 +33,4 @@ const INPUTS = {
   },
 } as const;
 
-export { INPUTS, BACKEND_REFERENCE_TIMEOUT };
+export { INPUTS, BACKEND_REFERENCE_TIMEOUT, CONTRACT_TIMEOUT };
