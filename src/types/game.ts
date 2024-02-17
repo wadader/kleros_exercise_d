@@ -8,7 +8,8 @@ export enum Move {
 }
 
 export function isValidMove(moveOption: number | null): moveOption is Move {
-  if (moveOption) return Number(moveOption) in Move;
+  if (moveOption === null) return false;
+  if (moveOption in Move) return true;
   return false;
 }
 
@@ -19,5 +20,3 @@ export const moves = [
   { value: String(Move.Spock), label: "Spock" },
   { value: String(Move.Lizard), label: "Lizard" },
 ] as const;
-
-console.log("moves:", moves);

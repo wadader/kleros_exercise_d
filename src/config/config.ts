@@ -1,3 +1,5 @@
+import ky from "ky";
+
 const mode = import.meta.env.MODE as Mode;
 
 const envEndpoints = {
@@ -10,10 +12,15 @@ const envEndpoints = {
 
 const BACKEND = envEndpoints[mode].backend;
 
-const DOMAIN = envEndpoints[mode].domain;
+// const DOMAIN = envEndpoints[mode].domain;
 
 const SOCKET_URL = envEndpoints[mode].socket;
 
-export { BACKEND, SOCKET_URL };
+const saltApi = ky.create({
+  prefixUrl: `${BACKEND}/salt`,
+  credentials: "include",
+});
+
+export { BACKEND, SOCKET_URL, saltApi };
 
 type Mode = "development";
