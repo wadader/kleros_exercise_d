@@ -12,7 +12,7 @@ const useGameStore = create<GameStore>()(
         identifier: undefined,
         selectedContract: undefined,
         creatorMove: Moves.Null,
-        lastAction: 0,
+        lastAction: undefined,
       },
 
       saveCreatedGame: ({
@@ -29,24 +29,29 @@ const useGameStore = create<GameStore>()(
         });
       },
       setters: {
-          salt: (newSalt) => {
+        salt: (newSalt) => {
+          set((state) => {
+            state.values.salt = newSalt;
+          });
+        },
+          identifier: (newIdentifier) => {
             set((state) => {
-              state.values.salt = newSalt;
+              state.values.identifier = newIdentifier;
             });
           },
-        //   identifier: (newIdentifier) => {
-        //     set((state) => {
-        //       state.values.identifier = newIdentifier;
-        //     });
-        //   },
-          selectedContract: (newSelectedContract) => {
-            set((state) => {
-              state.values.selectedContract = newSelectedContract;
-            });
-          },
+        selectedContract: (newSelectedContract) => {
+          set((state) => {
+            state.values.selectedContract = newSelectedContract;
+          });
+        },
         creatorMove: (selectedMove) => {
           set((state) => {
             state.values.creatorMove = selectedMove;
+          });
+        },
+        lastAction: (latestAction) => {
+          set((state) => {
+            state.values.lastAction = latestAction;
           });
         },
       },
@@ -63,14 +68,15 @@ interface GameStore {
     identifier: string | undefined;
     selectedContract: EthAddress | undefined;
     creatorMove: Moves;
-    lastAction: number;
+    lastAction: number | undefined;
   };
 
   setters: {
     salt: (newSalt: string) => void;
-    // identifier: (newIdentifier: string) => void;
+    identifier: (newIdentifier: string) => void;
     selectedContract: (newSelectedContract: EthAddress) => void;
     creatorMove: (move: Moves) => void;
+    lastAction: (latestAction: number) => void;
   };
   saveCreatedGame: (createdGameDetails: CreatedGameDetails) => void;
 }

@@ -3,14 +3,14 @@ import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
 import type { Moves } from "../../types/game";
 import type { EthAddress, EthHash } from "../../types/identifier";
 import { isHash } from "../../types/identifier";
-
 import { useState } from "react";
-import { gameApi, saltApi } from "../../config/config";
+import { gameApi, publicClient, saltApi } from "../../config/config";
 import { encodePacked, keccak256 } from "viem";
 import useWalletInteractionStore from "../../store/walletInteraction";
 import useGameStore from "../../store/game";
 import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
 import type { NavigateFunction } from "react-router-dom";
+import showTxFailedNotification from "../TransactionFailedNotification";
 
 function useCreateGame(
   createGameArgs: UseCreateGameArgs,
@@ -28,16 +28,25 @@ function useCreateGame(
 
       const { hashedMove, salt } = await getHashedMove(move);
 
-      const { abi, bytecode, gasEstimates } = RPS_ARTIFACT;
+      const { abi, bytecodeFiftenSecondTimeout, gasEstimates } = RPS_ARTIFACT;
       const createdTxHash = await walletClient.deployContract({
         abi,
-        bytecode,
+        bytecode: bytecodeFiftenSecondTimeout,
         args: [hashedMove, joinerAddress],
         value,
         gas: BigInt(Number(gasEstimates.creation.totalCost) * 2),
       });
       if (!isHash(createdTxHash)) {
         console.error("hash not as expected. Report error");
+        return;
+      }
+
+      const createGameTxReceipt = await publicClient.waitForTransactionReceipt({
+        hash: createdTxHash,
+      });
+
+      if (createGameTxReceipt.status === "reverted") {
+        showTxFailedNotification();
         return;
       }
 

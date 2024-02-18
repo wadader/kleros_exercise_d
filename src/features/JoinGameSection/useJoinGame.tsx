@@ -1,16 +1,19 @@
-import { usePublicClient, useWalletClient } from "wagmi";
+import {  useWalletClient } from "wagmi";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
 import type { Moves } from "../../types/game";
 import type { EthAddress, EthHash } from "../../types/identifier";
 import { isHash } from "../../types/identifier";
 
 import useWalletInteractionStore from "../../store/walletInteraction";
-import { gameApi } from "../../config/config";
+import { gameApi, publicClient } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
+import showTxFailedNotification from "../TransactionFailedNotification";
+import useGameStore from "../../store/game";
+import { useState } from "react";
 
 function useJoinGame({ move, contractAddress }: JoinGameArgs) {
+  const [joinGameTx, setJoinGameTx] = useState<EthHash>();
   const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
 
   async function joinGame() {
     try {
@@ -21,34 +24,55 @@ function useJoinGame({ move, contractAddress }: JoinGameArgs) {
         walletClient === undefined
       )
         return;
+
+      const { abi, gasEstimates } = RPS_ARTIFACT;
       const stake = await publicClient.readContract({
-        abi: RPS_ARTIFACT.abi,
+        abi: abi,
         address: contractAddress,
         functionName: "stake",
       });
 
       const joinGameTxHash = await walletClient.writeContract({
         address: contractAddress,
-        abi: RPS_ARTIFACT.abi,
+        abi: abi,
         functionName: "play",
         value: stake,
         args: [move],
+        gas: BigInt(Number(gasEstimates.external["play(uint8)"]) * 2),
       });
 
       if (!isHash(joinGameTxHash)) {
         console.error("hash not as expected. Report error");
         return;
       }
+      const joinGameTxReceipt = await publicClient.waitForTransactionReceipt({
+        hash: joinGameTxHash,
+      });
 
-      const res = joinGameBackend(joinGameTxHash, contractAddress);
+      if (joinGameTxReceipt.status === "reverted") {
+        showTxFailedNotification();
+        return;
+      }
+
+      const { lastAction, joinerIdentifier } = await joinGameBackend(
+        joinGameTxHash,
+        contractAddress
+      );
+
+      setJoinGameTx(joinGameTxHash);
+
+      useGameStore.getState().setters.lastAction(lastAction);
+      useGameStore.getState().setters.identifier(joinerIdentifier);
+
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {
       console.error("useJoinGame-error", e);
+      showTxFailedNotification();
       useWalletInteractionStore.getState().setHasExitedInteraction();
     }
   }
 
-  return { joinGame };
+  return { joinGame, joinGameTx };
 }
 
 export default useJoinGame;
@@ -57,6 +81,7 @@ async function joinGameBackend(
   playGameTxHash: EthHash,
   contractAddress: EthAddress
 ) {
+  console.log("joinGameBackend:", playGameTxHash);
   const joinGameReqBody: JoinGameReqBody = {
     playGameTxHash,
     contractAddress,
@@ -82,4 +107,6 @@ interface JoinGameReqBody {
 interface JoinGameResponse {
   ok: true;
   message: "joiner played game";
+  lastAction: number;
+  joinerIdentifier: string;
 }

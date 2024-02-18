@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useGameStore from "../../store/game";
 import { headToHeadSocket } from "../socket/socket";
+import { showNotification } from "@mantine/notifications";
 
 function useCreatorSocket() {
   const [hasJoinerPlayed, setHasJoinerPlayed] = useState(false);
@@ -14,11 +15,19 @@ function useCreatorSocket() {
     headToHeadSocket.emit("game:creator:created", identifier);
 
     function onPlayed(): void {
-      console.log("game:joiner-played");
+      showNotification({
+        title: "Game Played",
+        message: "Joiner has played game. Can solve now",
+      });
       setHasJoinerPlayed(true);
     }
 
     function onCreatorTimedOut() {
+      showNotification({
+        title: "Creator Timed Out",
+        message:
+          "Creator was inactive for an extended period. Joiner has triggered a timeout",
+      });
       setHasCreatorTimedOut(true);
     }
 

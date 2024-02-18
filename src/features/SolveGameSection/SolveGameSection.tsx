@@ -21,7 +21,7 @@ import useTimeout from "../timeout/useTimeout";
 import useTimeoutInactiveJoiner from "./useTimeoutInactiveJoiner";
 
 function SolveGameSection() {
-  const [canEdit, setCanEdit] = useState(false);
+  const [canEditState, setCanEditState] = useState(false);
 
   const {
     savedMovedState,
@@ -32,7 +32,7 @@ function SolveGameSection() {
     lastAction,
   } = useSolveGameValues();
 
-  const { hasJoinerPlayed } = useCreatorSocket();
+  const { hasJoinerPlayed, hasCreatorTimedOut } = useCreatorSocket();
 
   const navigate = useNavigate();
 
@@ -42,15 +42,19 @@ function SolveGameSection() {
     contractAddress: selectedContract,
   };
 
-  const { solveGame, winner } = useSolveGame(solveGameArgs);
-  const { timeoutInactiveJoiner, hasJoinerTimedOut } =
+  const { solveGame, winner, winnerAddress } = useSolveGame(solveGameArgs);
+  const { timeoutInactiveJoiner, timeoutJoinerTxHash } =
     useTimeoutInactiveJoiner(selectedContract);
 
-  const { hasTimedOut } = useTimeout(lastAction, CONTRACT_TIMEOUT);
+  const { hasTimeoutPeriodElapsed } = useTimeout(lastAction, CONTRACT_TIMEOUT);
+
+  const isWinner = winner !== undefined;
+
+  const canEdit = canEditState && !isWinner;
 
   function enableEdit() {
-    if (canEdit) return;
-    setCanEdit(true);
+    if (!canEditState || isWinner) return;
+    setCanEditState(true);
   }
 
   function editMove(_moveOption: string | null) {
@@ -68,51 +72,73 @@ function SolveGameSection() {
   }
 
   const noSavedSalt = savedSalt === undefined || savedSalt === "";
-  const canTimeout = hasTimedOut && !hasJoinerPlayed;
+
+  const canTimeout =
+    hasTimeoutPeriodElapsed &&
+    !timeoutJoinerTxHash &&
+    !isWinner &&
+    !hasCreatorTimedOut;
+
+  const canSolve =
+    !timeoutJoinerTxHash && hasJoinerPlayed && !isWinner && !hasCreatorTimedOut;
 
   useEffect(() => {
-    console.log();
-
     if (savedMovedState === Moves.Null || selectedContract === undefined)
       navigate("/");
-
-    const getSaltController = new AbortController();
-    const { signal: getSaltSignal } = getSaltController;
-
-    if (!canEdit && noSavedSalt) {
-      // if salt is not saved in localStorage: maybe the user has changed browsers or systems -> fetch it from the backend
-      // not as secure as localStorage, but the point is to demonstrate a full-stack app. It is secured with SIWE(sign-in-with-ethereum) though.
-      async function fetchSalt() {
-        const { salt } = await saltApi
-          .get(`salt?contractAddress=${selectedContract}`, {
-            signal: getSaltSignal,
-          })
-          .json<getSaltForGameResponse>();
-        setSalt(salt);
-      }
-      fetchSalt().catch((err) => {
-        if (err.name === "AbortError") {
-          console.log("aborted fetchSalt on cleanup");
-        } else {
-          console.error(err);
-        }
-      });
-    }
-
-    return () => {
-      getSaltController.abort();
-    };
+    //   return () => {
+    //     getSaltController.abort();
+    //   };
   }, []);
+
+  // ! I was planning a feature to allows users to solve the game from a separate browser system by retrieving the salt from the backend.
+  // ! However, the scope of this assignment is considerabe already so I have commented it out and left that feature incomplete.
+
+  // * if salt is not saved in localStorage: maybe the user has changed browsers or systems -> fetch it from the backend
+  // * not as secure as localStorage, but the point is to demonstrate a full-stack app. It is secured with SIWE(sign-in-with-ethereum) though.
+
+  // const getSaltController = new AbortController();
+  // const { signal: getSaltSignal } = getSaltController;
+
+  // if (!canEdit && noSavedSalt) {
+
+  //   async function fetchSalt() {
+  //     const { salt } = await saltApi
+  //       .get(`salt?contractAddress=${selectedContract}`, {
+  //         signal: getSaltSignal,
+  //       })
+  //       .json<getSaltForGameResponse>();
+  //     setSalt(salt);
+  //   }
+  //   fetchSalt().catch((err) => {
+  //     if (err.name === "AbortError") {
+  //       console.log("aborted fetchSalt on cleanup");
+  //     } else {
+  //       console.error(err);
+  //     }
+  //   });
+  // }
 
   return (
     <Stack>
       <Center>
         <Title order={3}>{selectedContract}</Title>
       </Center>
-      {winner !== undefined && (
-        <Center>
-          <Text>{winner}</Text>
-        </Center>
+      {timeoutJoinerTxHash && (
+        <Title order={4}>
+          Joiner Has Timed Out - TimeoutTxHash: {timeoutJoinerTxHash}
+        </Title>
+      )}
+
+      {timeoutJoinerTxHash && (
+        <Title order={4}>
+          Joiner Has Timed Out - TimeoutTxHash: {timeoutJoinerTxHash}
+        </Title>
+      )}
+
+      {hasCreatorTimedOut && (
+        <Stack>
+          <Title order={4}>Joiner has triggered a timeout on the creator</Title>
+        </Stack>
       )}
       <Select
         label={INPUTS.moves.label}
@@ -122,7 +148,6 @@ function SolveGameSection() {
         data={moves}
         disabled={!canEdit}
       />
-
       <TextInput
         label={INPUTS.salt.label}
         description={INPUTS.salt.description}
@@ -132,7 +157,6 @@ function SolveGameSection() {
         value={savedSalt}
         disabled={!canEdit}
       />
-
       <Center>
         <Switch
           label={"Edit values manually"}
@@ -141,18 +165,24 @@ function SolveGameSection() {
           onChange={enableEdit}
         />
       </Center>
-
       <Container>
-        <Text> Disabled until joiner plays</Text>
+        {!hasJoinerPlayed && <Text> Disabled until joiner plays</Text>}
         <Center>
-          <Button onClick={solveGame} disabled={!hasJoinerPlayed} my={10}>
+          <Button onClick={solveGame} disabled={!canSolve} my={10}>
             Solve
           </Button>
         </Center>
       </Container>
-      <Button disabled={!canTimeout} onClick={timeoutInactiveJoiner}>
-        Claim Timeout
-      </Button>
+      {!hasJoinerPlayed && (
+        <Stack>
+          {!canTimeout && !winner && <Text>Cannot Timeout yet. Wait </Text>}
+
+          <Button disabled={!canTimeout} onClick={timeoutInactiveJoiner}>
+            Time
+          </Button>
+          <Button onClick={timeoutInactiveJoiner}>Claim Timeout</Button>
+        </Stack>
+      )}
     </Stack>
   );
 }

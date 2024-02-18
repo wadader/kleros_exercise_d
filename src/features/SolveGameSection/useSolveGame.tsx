@@ -7,9 +7,12 @@ import { gameApi } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT as BACKEND_TIMEOUT } from "../consts";
 import { useState } from "react";
 import { GameOverReqBody } from "./useTimeoutInactiveJoiner";
+import { showNotification } from "@mantine/notifications";
+import showTxFailedNotification from "../TransactionFailedNotification";
 
 function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
   const [winner, setWinner] = useState<Winner>();
+  const [winnerAddress, setWinnerAddress] = useState<EthAddress>();
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -48,14 +51,24 @@ function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
         return;
       }
 
-      const solveGameResponse = await solveGameBackend(
+      const solveGameTxReceipt = await publicClient.waitForTransactionReceipt({
+        hash: solveGameTxHash,
+      });
+
+      if (solveGameTxReceipt.status === "reverted") {
+        showTxFailedNotification();
+        return;
+      }
+
+      const { winner, winnerAddress } = await solveGameBackend(
         solveGameTxHash,
         contractAddress,
         move,
         salt
       );
 
-      setWinner(solveGameResponse.winner);
+      setWinner(winner);
+      setWinnerAddress(winnerAddress);
 
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {
@@ -64,7 +77,7 @@ function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
     }
   }
 
-  return { solveGame, winner };
+  return { solveGame, winner, winnerAddress };
 }
 
 export default useSolveGame;
@@ -84,7 +97,7 @@ async function solveGameBackend(
     },
   };
   return await gameApi
-    .post("move", {
+    .post("over", {
       json: solveGameReqBody,
       timeout: BACKEND_TIMEOUT,
     })
@@ -100,9 +113,10 @@ export interface SolveGameArgs {
 interface SolveGameResponse {
   solved: true;
   winner: Winner;
+  winnerAddress?: EthAddress;
 }
 
-type Winner = "draw" | "incomplete" | "creator" | "joiner";
+export type Winner = "draw" | "incomplete" | "creator" | "joiner";
 
 interface SolveGameReqBody extends GameOverReqBody {
   creatorMove: {

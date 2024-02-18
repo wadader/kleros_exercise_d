@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Moves, isValidMove } from "../../types/game";
+import useGameStore from "../../store/game";
 
-function useCreateValues() {
+function useJoinValues() {
   const [moveState, setMoveState] = useState<Moves>(Moves.Rock);
+  const lastAction = useGameStore((state) => state.values.lastAction);
 
   function updateMoveState(_moveOption: string | null) {
     const move = Number(_moveOption);
@@ -16,7 +18,8 @@ function useCreateValues() {
 
   return {
     move,
+    lastAction,
   };
 }
 
-export default useCreateValues;
+export default useJoinValues;

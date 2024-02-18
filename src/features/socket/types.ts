@@ -1,8 +1,13 @@
 import type { Socket } from "socket.io-client";
+import { EthAddress } from "../../types/identifier";
 
 export interface Game_ServerToClientEvents {
   "game:joiner-played": () => void;
-  "game:creator-solved": (winner: Winner) => void;
+  "game:creator-solved": (
+    winner: Winner,
+    winnerAddress: EthAddress | undefined
+  ) => void;
+
   "game:joiner-creatorTimedOut": () => void;
   "game:creator-joinerTimedOut": () => void;
 }
