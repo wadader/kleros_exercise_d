@@ -7,8 +7,8 @@ import useJoinGame from "./useJoinGame";
 import useGameStore from "../../store/game";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { CONTRACT_TIMEOUT, INPUTS } from "../consts";
-import useTimeout from "../timeout/useTimeout";
+import { CONTRACT_TIMEOUT, INPUTS } from "../../features/consts";
+import useTimeout from "../../features/timeout/useTimeout";
 import useTimeoutInactiveCreator from "./useTimeoutInactiveCreator";
 import useJoinerSocket from "./useJoinerSocket";
 

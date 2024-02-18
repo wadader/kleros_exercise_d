@@ -1,11 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
+import GamesList from "../pages/GamesList/GamesList";
+import JoinGameSection from "../pages/JoinGameSection/JoinGameSection";
+import SolveGameSection from "../pages/SolveGameSection/SolveGameSection";
+import CreateGameSection from "../pages/CreateGameSection/CreateGameSection";
 import PageContainer from "../features/PageContainer/PageContainer";
-import CreateGameSection from "../features/CreateGameSection/CreateGameSection";
-import GamesList from "../features/GamesList/GamesList";
-import JoinGameSection from "../features/JoinGameSection/JoinGameSection";
-import SolveGameSection from "../features/SolveGameSection/SolveGameSection";
-
-import { Center } from "@mantine/core";
 import RpslzImage from "../features/RpslzImage/RpslzImage";
 
 export const createdRouter = createBrowserRouter([

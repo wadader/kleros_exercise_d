@@ -6,8 +6,8 @@ import { isHash } from "../../types/identifier";
 
 import useWalletInteractionStore from "../../store/walletInteraction";
 import { gameApi, publicClient } from "../../config/config";
-import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
-import showTxFailedNotification from "../TransactionFailedNotification";
+import { BACKEND_REFERENCE_TIMEOUT } from "../../features/consts";
+import showTxFailedNotification from "../../features/TransactionFailedNotification";
 import useGameStore from "../../store/game";
 import { useState } from "react";
 

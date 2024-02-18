@@ -4,48 +4,45 @@ import useWalletInteractionStore from "../../store/walletInteraction";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
 import { useState } from "react";
 import { gameApi, publicClient } from "../../config/config";
-import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
-import showTxFailedNotification from "../TransactionFailedNotification";
+import { BACKEND_REFERENCE_TIMEOUT } from "../../features/consts";
+import showTxFailedNotification from "../../features/TransactionFailedNotification";
 
-function useTimeoutInactiveJoiner(contractAddress: EthAddress | undefined) {
-  const [timeoutJoinerTxHash, setTimeoutJoinerTxHash] = useState<EthHash>();
+function useTimeoutInactiveCreator(contractAddress: EthAddress | undefined) {
+  const [creatorTimedOutTxHash, setCreatorTimedOutTxHash] = useState<EthHash>();
 
   const { data: walletClient } = useWalletClient();
 
-  async function timeoutInactiveJoiner() {
+  async function timeoutInactiveCreator() {
     try {
       if (walletClient === undefined || contractAddress === undefined) return;
       useWalletInteractionStore.getState().setStartInteraction();
 
       const { abi } = RPS_ARTIFACT;
 
-      const txHash = await walletClient.writeContract({
+      const timeoutCreatorTxHash = await walletClient.writeContract({
         abi,
-        functionName: "j2Timeout",
+        functionName: "j1Timeout",
         address: contractAddress,
       });
 
-      if (!isHash(txHash)) {
+      if (!isHash(timeoutCreatorTxHash)) {
         console.error("hash not as expected. Report error");
         return;
       }
 
-      const timeoutJoinerTxReceipt =
+      const timeoutCreatorTxReceipt =
         await publicClient.waitForTransactionReceipt({
-          hash: txHash,
+          hash: timeoutCreatorTxHash,
         });
 
-      if (timeoutJoinerTxReceipt.status === "reverted") {
+      if (timeoutCreatorTxReceipt.status === "reverted") {
         showTxFailedNotification();
         return;
       }
 
-      const timeoutJoinerResponse = await timeoutJoiner(
-        txHash,
-        contractAddress
-      );
+      await timeoutJoiner(timeoutCreatorTxHash, contractAddress);
 
-      setTimeoutJoinerTxHash(txHash);
+      setCreatorTimedOutTxHash(timeoutCreatorTxHash);
 
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {
@@ -54,10 +51,10 @@ function useTimeoutInactiveJoiner(contractAddress: EthAddress | undefined) {
     }
   }
 
-  return { timeoutInactiveJoiner, timeoutJoinerTxHash };
+  return { timeoutInactiveCreator, creatorTimedOutTxHash };
 }
 
-export default useTimeoutInactiveJoiner;
+export default useTimeoutInactiveCreator;
 
 async function timeoutJoiner(
   solveGameTx: EthHash,
@@ -66,13 +63,14 @@ async function timeoutJoiner(
   const timeoutJoinerReqBody: GameOverReqBody = {
     contractAddress,
     gameEndTxHash: solveGameTx,
+    hasCreatorTimedOut: true,
   };
   return await gameApi
     .post("over", {
       json: timeoutJoinerReqBody,
       timeout: BACKEND_REFERENCE_TIMEOUT,
     })
-    .json<JoinerTimedOutResponse>();
+    .json<CreatorTimedOutResponse>();
 }
 
 export interface GameOverReqBody {
@@ -81,7 +79,7 @@ export interface GameOverReqBody {
   hasCreatorTimedOut?: true; // this discriminator is required in the case joiner and creator are the same
 }
 
-interface JoinerTimedOutResponse {
-  joinerHasTimedOut: true;
+interface CreatorTimedOutResponse {
+  creatorHasTimedOut: true;
   message: "game over";
 }

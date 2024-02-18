@@ -15,8 +15,8 @@ import type { UseCreateGameArgs } from "./useCreateGame";
 import { isEthAddress } from "../../types/identifier";
 import useSiweStore from "../../store/siwe";
 import { parseEther } from "viem";
-import { INPUTS } from "../consts";
 import { useNavigate } from "react-router-dom";
+import { INPUTS } from "../../features/consts";
 
 function CreateGameSection() {
   const createValues = useCreateValues();
@@ -69,6 +69,7 @@ function CreateGameSection() {
         onChange={move.setter}
         value={String(move.value)}
         data={moves}
+        allowDeselect={false}
       />
 
       <Button disabled={!canCreateGame} onClick={createGame}>

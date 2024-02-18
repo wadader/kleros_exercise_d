@@ -56,7 +56,6 @@ function useSiweAuth() {
         signOut();
       } catch (e) {
         console.error("auth error:", e);
-        signIn();
       }
     },
   });

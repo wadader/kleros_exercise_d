@@ -2,7 +2,7 @@ import { useState } from "react";
 import { isValidMove } from "../../types/game";
 import { isEthAddress } from "../../types/identifier";
 import useGameStore from "../../store/game";
-import { INPUTS } from "../consts";
+import { INPUTS } from "../../features/consts";
 
 function useCreateValues() {
   const [stakeState, setStakeState] = useState<string | number>(0);

@@ -8,9 +8,9 @@ import { gameApi, publicClient, saltApi } from "../../config/config";
 import { encodePacked, keccak256 } from "viem";
 import useWalletInteractionStore from "../../store/walletInteraction";
 import useGameStore from "../../store/game";
-import { BACKEND_REFERENCE_TIMEOUT } from "../consts";
 import type { NavigateFunction } from "react-router-dom";
-import showTxFailedNotification from "../TransactionFailedNotification";
+import showTxFailedNotification from "../../features/TransactionFailedNotification";
+import { BACKEND_REFERENCE_TIMEOUT } from "../../features/consts";
 
 function useCreateGame(
   createGameArgs: UseCreateGameArgs,

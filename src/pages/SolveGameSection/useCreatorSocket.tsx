@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useGameStore from "../../store/game";
-import { headToHeadSocket } from "../socket/socket";
+import { headToHeadSocket } from "../../features/socket/socket";
 import { showNotification } from "@mantine/notifications";
 
 function useCreatorSocket() {

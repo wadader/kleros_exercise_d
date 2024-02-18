@@ -11,13 +11,13 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Moves, isValidMove, moves } from "../../types/game";
-import { CONTRACT_TIMEOUT, INPUTS } from "../consts";
+import { CONTRACT_TIMEOUT, INPUTS } from "../../features/consts";
 import { saltApi } from "../../config/config";
 import { useNavigate } from "react-router-dom";
 import useSolveGame, { SolveGameArgs } from "./useSolveGame";
 import useSolveGameValues from "./useSolveGameValues";
 import useCreatorSocket from "./useCreatorSocket";
-import useTimeout from "../timeout/useTimeout";
+import useTimeout from "../../features/timeout/useTimeout";
 import useTimeoutInactiveJoiner from "./useTimeoutInactiveJoiner";
 
 function SolveGameSection() {
