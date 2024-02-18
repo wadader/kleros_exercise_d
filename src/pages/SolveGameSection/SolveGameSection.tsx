@@ -12,7 +12,6 @@ import {
 import { useEffect, useState } from "react";
 import { Moves, isValidMove, moves } from "../../types/game";
 import { CONTRACT_TIMEOUT, INPUTS } from "../../features/consts";
-import { saltApi } from "../../config/config";
 import { useNavigate } from "react-router-dom";
 import useSolveGame, { SolveGameArgs } from "./useSolveGame";
 import useSolveGameValues from "./useSolveGameValues";
@@ -71,8 +70,6 @@ function SolveGameSection() {
     setSalt(editedSalt);
   }
 
-  const noSavedSalt = savedSalt === undefined || savedSalt === "";
-
   const canTimeout =
     hasTimeoutPeriodElapsed &&
     !timeoutJoinerTxHash &&
@@ -123,10 +120,14 @@ function SolveGameSection() {
       <Center>
         <Title order={3}>{selectedContract}</Title>
       </Center>
-      {timeoutJoinerTxHash && (
-        <Title order={4}>
-          Joiner Has Timed Out - TimeoutTxHash: {timeoutJoinerTxHash}
-        </Title>
+
+      {winner && (
+        <Stack>
+          <Title order={4}>Winner: {winner}</Title>
+          {winnerAddress && (
+            <Title order={4}>Winner Address: {winnerAddress}</Title>
+          )}
+        </Stack>
       )}
 
       {timeoutJoinerTxHash && (

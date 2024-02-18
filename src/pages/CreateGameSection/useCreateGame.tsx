@@ -29,6 +29,7 @@ function useCreateGame(
       const { hashedMove, salt } = await getHashedMove(move);
 
       const { abi, bytecodeFiftenSecondTimeout, gasEstimates } = RPS_ARTIFACT;
+
       const createdTxHash = await walletClient.deployContract({
         abi,
         bytecode: bytecodeFiftenSecondTimeout,
@@ -36,6 +37,7 @@ function useCreateGame(
         value,
         gas: BigInt(Number(gasEstimates.creation.totalCost) * 2),
       });
+
       if (!isHash(createdTxHash)) {
         console.error("hash not as expected. Report error");
         return;
@@ -52,6 +54,7 @@ function useCreateGame(
 
       const { createdGameAddress, creatorIdentifier, lastAction } =
         await createGameBackendReference(createdTxHash, salt);
+
       useGameStore.getState().saveCreatedGame({
         salt,
         creatorIdentifier,

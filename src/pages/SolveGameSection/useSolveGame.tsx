@@ -7,7 +7,6 @@ import { gameApi } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT as BACKEND_TIMEOUT } from "../../features/consts";
 import { useState } from "react";
 import { GameOverReqBody } from "./useTimeoutInactiveJoiner";
-import { showNotification } from "@mantine/notifications";
 import showTxFailedNotification from "../../features/TransactionFailedNotification";
 
 function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
