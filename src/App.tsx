@@ -11,6 +11,7 @@ import { ThemeProvider } from "./ThemeProvider";
 import { createdRouter } from "./routes/routes";
 import { getWagmiProviderConfig } from "./RainbowkitConfig/RainbowkitConfig";
 import useSiweAuth from "./RainbowkitConfig/RainbowKitAuth";
+import { Notifications } from "@mantine/notifications";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ export default function App() {
         >
           <RainbowKitProvider theme={darkTheme()}>
             <ThemeProvider>
+              <Notifications />
               <RouterProvider router={createdRouter} />
             </ThemeProvider>
           </RainbowKitProvider>
