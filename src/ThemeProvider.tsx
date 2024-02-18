@@ -1,6 +1,7 @@
 import { MantineProvider, createTheme } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@rainbow-me/rainbowkit/styles.css";
 
 interface ThemeProviderProps {
   children: React.ReactNode;

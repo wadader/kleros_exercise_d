@@ -1,7 +1,7 @@
 import ky from "ky";
 import { getPublicClient, createConfig } from "@wagmi/core";
 import { defineChain, http } from "viem";
-// import { sepolia } from "viem/chains";
+import { sepolia } from "viem/chains";
 import { env_Vars } from "./env";
 
 const mode = import.meta.env.MODE as Mode;
@@ -50,12 +50,8 @@ const ganache = defineChain({
   },
 });
 
-// const SELECTED_CHAIN = sepolia;
-const SELECTED_CHAIN = ganache;
-
-const transports = {
-  [SELECTED_CHAIN.id]: http(env_Vars.INFURA_ENDPOINT),
-} as const;
+const SELECTED_CHAIN = sepolia;
+// const SELECTED_CHAIN = ganache;
 
 const publicClientConfig = createConfig({
   chains: [SELECTED_CHAIN],
@@ -72,9 +68,8 @@ export {
   gameApi,
   authApi,
   ganache,
-  transports,
   SELECTED_CHAIN,
-  publicClient
+  publicClient,
 };
 
 type Mode = "development";
