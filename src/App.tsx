@@ -20,17 +20,6 @@ import { SELECTED_CHAIN } from "./config/config";
 
 const queryClient = new QueryClient();
 
-const transports = {
-  [SELECTED_CHAIN.id]: http(env_Vars.INFURA_ENDPOINT),
-} as const;
-
-const config = getDefaultConfig({
-  appName: "Rock Paper Scissors Lizard Spock",
-  projectId: env_Vars.WALLET_CONNECT_PROJECT_ID,
-  chains: [SELECTED_CHAIN],
-  transports: transports,
-});
-
 export default function App() {
   const { authenticationStatus } = useSiweAuth();
 
@@ -52,3 +41,14 @@ export default function App() {
     </WagmiProvider>
   );
 }
+
+const transports = {
+  [SELECTED_CHAIN.id]: http(env_Vars.INFURA_ENDPOINT),
+} as const;
+
+const config = getDefaultConfig({
+  appName: "Rock Paper Scissors Lizard Spock",
+  projectId: env_Vars.WALLET_CONNECT_PROJECT_ID,
+  chains: [SELECTED_CHAIN],
+  transports: transports,
+});
