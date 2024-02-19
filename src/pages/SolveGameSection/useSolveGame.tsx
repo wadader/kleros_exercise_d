@@ -1,21 +1,28 @@
-import { usePublicClient, useWalletClient } from "wagmi";
+import {  useWalletClient } from "wagmi";
+import { createPublicClient, http } from 'viem'
 import { Moves } from "../../types/game";
 import useWalletInteractionStore from "../../store/walletInteraction";
 import { RPS_ARTIFACT } from "../../config/artifacts/RPS";
 import { isHash, type EthAddress, EthHash } from "../../types/identifier";
-import { gameApi } from "../../config/config";
+import { SELECTED_CHAIN, gameApi } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT as BACKEND_TIMEOUT } from "../../features/consts";
 import { useState } from "react";
 import { GameOverReqBody } from "./useTimeoutInactiveJoiner";
 import showTxFailedNotification from "../../features/TransactionFailedNotification";
 import useGameStore from "../../store/game";
 
+
+const publicClient = createPublicClient({
+  chain: SELECTED_CHAIN, 
+  transport: http()
+})
+
 function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
   const [winner, setWinner] = useState<Winner>();
   const [winnerAddress, setWinnerAddress] = useState<EthAddress>();
 
   const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
+
 
   async function solveGame() {
     try {
@@ -37,7 +44,7 @@ function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
       if (joinerMove === Moves.Null)
         throw new Error("joiner hasn't played yet");
 
-      const solveGameArgs = [move, salt] as const;
+      const solveGameArgs = [move, BigInt(salt)] as const;
 
       const solveGameTxHash = await walletClient.writeContract({
         address: contractAddress,
