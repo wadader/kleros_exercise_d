@@ -12,11 +12,13 @@ const envEndpoints = {
     domain: "localhost:5173",
     socket: "http://localhost:6001",
   },
+  staging: {
+    backend: "https://klerosexercisedbackend-production.up.railway.app/api/v1",
+    socket: "https://klerosexercisedbackend-production.up.railway.app/",
+  },
 } as const;
 
 const BACKEND = envEndpoints[mode].backend;
-
-// const DOMAIN = envEndpoints[mode].domain;
 
 const SOCKET_URL = envEndpoints[mode].socket;
 
