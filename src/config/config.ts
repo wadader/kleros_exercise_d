@@ -50,6 +50,7 @@ const ganache = defineChain({
       http: ["http://127.0.0.1:7545"],
     },
   },
+  testnet: true,
 });
 
 const SELECTED_CHAIN = sepolia;
