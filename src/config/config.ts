@@ -18,7 +18,7 @@ const envEndpoints = {
   },
 } as const;
 
-const BACKEND = envEndpoints[mode].backend;
+export const BACKEND = envEndpoints[mode].backend;
 
 const SOCKET_URL = envEndpoints[mode].socket;
 

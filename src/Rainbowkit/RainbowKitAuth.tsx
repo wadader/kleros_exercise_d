@@ -2,7 +2,7 @@ import { createAuthenticationAdapter } from "@rainbow-me/rainbowkit";
 
 import { SiweMessage } from "siwe";
 import useSiweStore from "../store/siwe";
-import { authApi } from "../config/config";
+import { BACKEND, authApi } from "../config/config";
 
 function useSiweAuth() {
   const authenticationStatus = useSiweStore(
@@ -36,9 +36,19 @@ export const authenticationAdapter = createAuthenticationAdapter({
   verify: async ({ message, signature }) => {
     try {
       useSiweStore.getState().setIsLoading();
-      const verifyRes = await authApi.post("verify", {
-        json: { message, signature },
+
+      const verifyRes = await fetch(`${BACKEND}/auth/verify`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message, signature }),
+        credentials: "include",
       });
+
+      // const verifyRes = await authApi.post("verify", {
+      //   json: { message, signature },
+      // });
 
       if (verifyRes.ok) useSiweStore.getState().signIn();
       else useSiweStore.getState().signOut();
