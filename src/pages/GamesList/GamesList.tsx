@@ -1,6 +1,6 @@
-import { Container, Stack, Text } from "@mantine/core";
+import { Center, Container, Loader, Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import {  gameApi } from "../../config/config";
+import { gameApi } from "../../config/config";
 import { useAccount } from "wagmi";
 import GameItem from "./GameItem/GameItem";
 import useSiweStore from "../../store/siwe";
@@ -23,12 +23,18 @@ function GamesList() {
     <Stack mt={50}>
       {isSignedIn ? (
         games !== undefined ? (
-          games.map((game) => (
-            <GameItem
-              key={game.contractAddress}
-              contractAddress={game.contractAddress}
-            />
-          ))
+          games.length > 0 ? (
+            games.map((game) => (
+              <GameItem
+                key={game.contractAddress}
+                contractAddress={game.contractAddress}
+              />
+            ))
+          ) : (
+            <Center>
+              <Loader />
+            </Center>
+          )
         ) : (
           <Container>
             <Text>No games for this user</Text>
