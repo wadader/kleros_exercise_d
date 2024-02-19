@@ -28,12 +28,9 @@ function useTimeout(
   return { hasTimeoutPeriodElapsed };
 }
 
-// const FITEEN_SECONDS = 15_000;
-
 // block.timestamp is accurate to ~10 seconds, so we have a bit of a buffer
+const TWELVE_SECONDS = 12_000;
 
-const oneSec = 1000;
-
-const bufferTime = oneSec;
+const bufferTime = TWELVE_SECONDS;
 
 export default useTimeout;

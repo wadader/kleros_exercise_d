@@ -1,11 +1,10 @@
 import { moves } from "../types/game";
 
 const ONE_MINUTE_IN_MILLISECONDS = 120_000;
-const FIVE_MINUTES_IN_MILLISECONDS = 300_000;
+const FIVE_MINUTES_IN_SECONDS = 300;
 
 // as the contract TIMEOUT is fixed, I am declaring the value here as a const. For a varying value, I could fetch from the contract when using it;
-const CONTRACT_TIMEOUT = FIVE_MINUTES_IN_MILLISECONDS;
-
+const CONTRACT_TIMEOUT = FIVE_MINUTES_IN_SECONDS;
 const BACKEND_REFERENCE_TIMEOUT = ONE_MINUTE_IN_MILLISECONDS;
 
 const INPUTS = {
