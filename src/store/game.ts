@@ -1,74 +1,70 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type { EthAddress } from "../types/identifier";
 import { Moves } from "../types/game";
 
 const useGameStore = create<GameStore>()(
-  persist(
-    immer((set) => ({
-      values: {
-        salt: undefined,
-        identifier: undefined,
-        selectedContract: undefined,
-        creatorMove: Moves.Null,
-        lastAction: undefined,
-      },
-      setters: {
-        salt: (newSalt) => {
-          set((state) => {
-            state.values.salt = newSalt;
-          });
-        },
-        identifier: (newIdentifier) => {
-          set((state) => {
-            state.values.identifier = newIdentifier;
-          });
-        },
-        selectedContract: (newSelectedContract) => {
-          set((state) => {
-            state.values.selectedContract = newSelectedContract;
-          });
-        },
-        creatorMove: (selectedMove) => {
-          set((state) => {
-            state.values.creatorMove = selectedMove;
-          });
-        },
-        lastAction: (latestAction) => {
-          set((state) => {
-            state.values.lastAction = latestAction;
-          });
-        },
-      },
-      saveCreatedGame: ({
-        salt,
-        creatorIdentifier,
-        createdContractAddress: selectedContract,
-        createdTime,
-      }) => {
+  immer((set) => ({
+    values: {
+      salt: undefined,
+      identifier: undefined,
+      selectedContract: undefined,
+      creatorMove: Moves.Null,
+      lastAction: undefined,
+    },
+    setters: {
+      salt: (newSalt) => {
         set((state) => {
-          state.values.salt = salt;
-          state.values.identifier = creatorIdentifier;
-          state.values.selectedContract = selectedContract;
-          state.values.lastAction = createdTime;
+          state.values.salt = newSalt;
         });
       },
-      resetGame() {
-        console.log("resetGame:resetGame");
-        set({
-          values: {
-            salt: undefined,
-            identifier: undefined,
-            selectedContract: undefined,
-            creatorMove: Moves.Null,
-            lastAction: undefined,
-          },
+      identifier: (newIdentifier) => {
+        set((state) => {
+          state.values.identifier = newIdentifier;
         });
       },
-    })),
-    { name: "game-storage", partialize: (state) => ({ values: state.values }) }
-  )
+      selectedContract: (newSelectedContract) => {
+        set((state) => {
+          state.values.selectedContract = newSelectedContract;
+        });
+      },
+      creatorMove: (selectedMove) => {
+        set((state) => {
+          state.values.creatorMove = selectedMove;
+        });
+      },
+      lastAction: (latestAction) => {
+        set((state) => {
+          state.values.lastAction = latestAction;
+        });
+      },
+    },
+    saveCreatedGame: ({
+      salt,
+      creatorIdentifier,
+      createdContractAddress: selectedContract,
+      createdTime,
+    }) => {
+      set((state) => {
+        state.values.salt = salt;
+        state.values.identifier = creatorIdentifier;
+        state.values.selectedContract = selectedContract;
+        state.values.lastAction = createdTime;
+      });
+    },
+    resetGame() {
+      console.log("resetGame:resetGame");
+      set({
+        values: {
+          salt: undefined,
+          identifier: undefined,
+          selectedContract: undefined,
+          creatorMove: Moves.Null,
+          lastAction: undefined,
+        },
+      });
+    },
+  }))
 );
 
 export default useGameStore;
