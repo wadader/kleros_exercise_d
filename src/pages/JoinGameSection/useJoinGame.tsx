@@ -81,7 +81,6 @@ async function joinGameBackend(
   playGameTxHash: EthHash,
   contractAddress: EthAddress
 ) {
-  console.log("joinGameBackend:", playGameTxHash);
   const joinGameReqBody: JoinGameReqBody = {
     playGameTxHash,
     contractAddress,

@@ -13,7 +13,6 @@ function useJoinerSocket() {
   const identifier = useGameStore().values.identifier;
 
   useEffect(() => {
-    console.log("identifier:", identifier);
 
     if (identifier === undefined) return;
 
