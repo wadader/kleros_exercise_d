@@ -1,6 +1,6 @@
 import { Button, Center, Select, Stack, Text, Title } from "@mantine/core";
 import useJoinValues from "./useJoinValues";
-import { Moves, moves } from "../../types/game";
+import { moves } from "../../types/game";
 
 import useSiweStore from "../../store/siwe";
 import useJoinGame from "./useJoinGame";
@@ -28,8 +28,6 @@ function JoinGameSection() {
   const { timeoutInactiveCreator, creatorTimedOutTxHash } =
     useTimeoutInactiveCreator(selectedContract);
 
-  console.table({ hasTimeoutPeriodElapsed, creatorTimedOutTxHash });
-
   const { joinGame, joinGameTx } = useJoinGame({
     move: move.value,
     contractAddress: selectedContract,
@@ -45,7 +43,10 @@ function JoinGameSection() {
       !creatorTimedOutTxHash
   );
 
-  const canTimeout = hasTimeoutPeriodElapsed && !creatorTimedOutTxHash;
+  const isGameOver = creatorTimedOutTxHash || hasJoinerTimedOut || winner;
+
+  const canTimeout =
+    hasTimeoutPeriodElapsed && !creatorTimedOutTxHash && !winner;
 
   const navigate = useNavigate();
 
@@ -71,7 +72,7 @@ function JoinGameSection() {
       {joinGameTx && (
         <Stack>
           <Title order={5}>JoinGameTx: {joinGameTx}</Title>
-          {!winner && <Text>Join Game Tx Sent. Waiting for solution</Text>}
+          {!isGameOver && <Text>Join Game Tx Sent. Waiting for solution</Text>}
         </Stack>
       )}
 
