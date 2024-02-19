@@ -13,8 +13,8 @@ const envEndpoints = {
     socket: "http://localhost:6001",
   },
   staging: {
-    backend: "https://klerosexercisedbackend-production.up.railway.app/api/v1",
-    socket: "https://klerosexercisedbackend-production.up.railway.app/",
+    backend: "https://backend.mbaexplores.dev/api/v1",
+    socket: "https://backend.mbaexplores.dev/",
   },
 } as const;
 
