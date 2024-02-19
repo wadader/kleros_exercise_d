@@ -28,11 +28,11 @@ function useCreateGame(
 
       const { hashedMove, salt } = await getHashedMove(move);
 
-      const { abi, bytecodeFiftenSecondTimeout, gasEstimates } = RPS_ARTIFACT;
+      const { abi, bytecode, gasEstimates } = RPS_ARTIFACT;
 
       const createdTxHash = await walletClient.deployContract({
         abi,
-        bytecode: bytecodeFiftenSecondTimeout,
+        bytecode: bytecode,
         args: [hashedMove, joinerAddress],
         value,
         gas: BigInt(Number(gasEstimates.creation.totalCost) * 2),
