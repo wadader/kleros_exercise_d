@@ -47,10 +47,8 @@ function PageContainer() {
                 <ConnectButton />
               </Center>
               <Group>
-                <Text>
-                  Chain For Application: {SELECTED_CHAIN.name}
-                  <Text>Chain Id: {SELECTED_CHAIN.id}</Text>
-                </Text>
+                <Text>Chain For Application: {SELECTED_CHAIN.name}</Text>
+                <Text>Chain Id: {SELECTED_CHAIN.id}</Text>
               </Group>
             </Stack>
           </Center>
