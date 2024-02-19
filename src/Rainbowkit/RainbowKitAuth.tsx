@@ -37,18 +37,9 @@ export const authenticationAdapter = createAuthenticationAdapter({
     try {
       useSiweStore.getState().setIsLoading();
 
-      const verifyRes = await fetch(`${BACKEND}/auth/verify`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message, signature }),
-        credentials: "include",
+      const verifyRes = await authApi.post("verify", {
+        json: { message, signature },
       });
-
-      // const verifyRes = await authApi.post("verify", {
-      //   json: { message, signature },
-      // });
 
       if (verifyRes.ok) useSiweStore.getState().signIn();
       else useSiweStore.getState().signOut();
