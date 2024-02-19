@@ -8,6 +8,7 @@ import { BACKEND_REFERENCE_TIMEOUT as BACKEND_TIMEOUT } from "../../features/con
 import { useState } from "react";
 import { GameOverReqBody } from "./useTimeoutInactiveJoiner";
 import showTxFailedNotification from "../../features/TransactionFailedNotification";
+import useGameStore from "../../store/game";
 
 function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
   const [winner, setWinner] = useState<Winner>();
@@ -68,6 +69,8 @@ function useSolveGame({ move, salt, contractAddress }: SolveGameArgs) {
 
       setWinner(winner);
       setWinnerAddress(winnerAddress);
+
+      useGameStore.getState().resetGame();
 
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {

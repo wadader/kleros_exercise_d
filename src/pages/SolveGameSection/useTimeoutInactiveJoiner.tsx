@@ -6,6 +6,7 @@ import { useState } from "react";
 import { gameApi, publicClient } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT } from "../../features/consts";
 import showTxFailedNotification from "../../features/TransactionFailedNotification";
+import useGameStore from "../../store/game";
 
 function useTimeoutInactiveJoiner(contractAddress: EthAddress | undefined) {
   const [timeoutJoinerTxHash, setTimeoutJoinerTxHash] = useState<EthHash>();
@@ -46,6 +47,8 @@ function useTimeoutInactiveJoiner(contractAddress: EthAddress | undefined) {
       );
 
       setTimeoutJoinerTxHash(txHash);
+
+      useGameStore.getState().resetGame();
 
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {

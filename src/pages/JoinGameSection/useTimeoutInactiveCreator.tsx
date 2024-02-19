@@ -6,6 +6,7 @@ import { useState } from "react";
 import { gameApi, publicClient } from "../../config/config";
 import { BACKEND_REFERENCE_TIMEOUT } from "../../features/consts";
 import showTxFailedNotification from "../../features/TransactionFailedNotification";
+import useGameStore from "../../store/game";
 
 function useTimeoutInactiveCreator(contractAddress: EthAddress | undefined) {
   const [creatorTimedOutTxHash, setCreatorTimedOutTxHash] = useState<EthHash>();
@@ -44,6 +45,7 @@ function useTimeoutInactiveCreator(contractAddress: EthAddress | undefined) {
 
       setCreatorTimedOutTxHash(timeoutCreatorTxHash);
 
+      useGameStore.getState().resetGame();
       useWalletInteractionStore.getState().setHasExitedInteraction();
     } catch (e) {
       console.error("createGame-error", e);

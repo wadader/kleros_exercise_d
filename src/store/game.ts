@@ -14,31 +14,17 @@ const useGameStore = create<GameStore>()(
         creatorMove: Moves.Null,
         lastAction: undefined,
       },
-
-      saveCreatedGame: ({
-        salt,
-        creatorIdentifier,
-        createdContractAddress: selectedContract,
-        createdTime,
-      }) => {
-        set((state) => {
-          state.values.salt = salt;
-          state.values.identifier = creatorIdentifier;
-          state.values.selectedContract = selectedContract;
-          state.values.lastAction = createdTime;
-        });
-      },
       setters: {
         salt: (newSalt) => {
           set((state) => {
             state.values.salt = newSalt;
           });
         },
-          identifier: (newIdentifier) => {
-            set((state) => {
-              state.values.identifier = newIdentifier;
-            });
-          },
+        identifier: (newIdentifier) => {
+          set((state) => {
+            state.values.identifier = newIdentifier;
+          });
+        },
         selectedContract: (newSelectedContract) => {
           set((state) => {
             state.values.selectedContract = newSelectedContract;
@@ -54,6 +40,31 @@ const useGameStore = create<GameStore>()(
             state.values.lastAction = latestAction;
           });
         },
+      },
+      saveCreatedGame: ({
+        salt,
+        creatorIdentifier,
+        createdContractAddress: selectedContract,
+        createdTime,
+      }) => {
+        set((state) => {
+          state.values.salt = salt;
+          state.values.identifier = creatorIdentifier;
+          state.values.selectedContract = selectedContract;
+          state.values.lastAction = createdTime;
+        });
+      },
+      resetGame() {
+        console.log("resetGame:resetGame");
+        set({
+          values: {
+            salt: undefined,
+            identifier: undefined,
+            selectedContract: undefined,
+            creatorMove: Moves.Null,
+            lastAction: undefined,
+          },
+        });
       },
     })),
     { name: "game-storage", partialize: (state) => ({ values: state.values }) }
@@ -79,6 +90,7 @@ interface GameStore {
     lastAction: (latestAction: number) => void;
   };
   saveCreatedGame: (createdGameDetails: CreatedGameDetails) => void;
+  resetGame: () => void;
 }
 
 interface CreatedGameDetails {
