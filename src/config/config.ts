@@ -34,6 +34,7 @@ const gameApi = ky.create({
 
 const authApi = ky.create({
   prefixUrl: `${BACKEND}/auth`,
+  credentials: "include",
 });
 
 const ganache = defineChain({
