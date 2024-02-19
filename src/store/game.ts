@@ -53,7 +53,6 @@ const useGameStore = create<GameStore>()(
       });
     },
     resetGame() {
-      console.log("resetGame:resetGame");
       set({
         values: {
           salt: undefined,

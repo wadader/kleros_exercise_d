@@ -13,7 +13,6 @@ function useJoinerSocket() {
   const identifier = useGameStore().values.identifier;
 
   useEffect(() => {
-
     if (identifier === undefined) return;
 
     headToHeadSocket.connect();
@@ -23,7 +22,6 @@ function useJoinerSocket() {
       _winner: Winner,
       _winnerAddress: EthAddress | undefined
     ): void {
-      console.log("onSolved:", _winner, _winnerAddress);
       const winnerString =
         _winner === "draw" ? `It's a draw` : `The Winner is ${_winner}`;
       setWinner(_winner);
