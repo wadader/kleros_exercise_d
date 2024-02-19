@@ -76,23 +76,17 @@ function SolveGameSection() {
     !isWinner &&
     !hasCreatorTimedOut;
 
-  const canSolve =
-    !timeoutJoinerTxHash && hasJoinerPlayed && !isWinner && !hasCreatorTimedOut;
+  const isGameOver = timeoutJoinerTxHash || isWinner || hasCreatorTimedOut;
 
-  useEffect(() => {
-    if (savedMovedState === Moves.Null || selectedContract === undefined)
-      navigate("/");
-    //   return () => {
-    //     getSaltController.abort();
-    //   };
-  }, []);
+  const canSolve = hasJoinerPlayed && !isGameOver;
 
   // ! I was planning a feature to allows users to solve the game from a separate browser system by retrieving the salt from the backend.
-  // ! However, the scope of this assignment is considerabe already so I have commented it out and left that feature incomplete.
+  // ! However, the scope of this assignment is considerabe already so I have commented it out and left that feature as a future improvement.
 
   // * if salt is not saved in localStorage: maybe the user has changed browsers or systems -> fetch it from the backend
   // * not as secure as localStorage, but the point is to demonstrate a full-stack app. It is secured with SIWE(sign-in-with-ethereum) though.
 
+  // useEffect
   // const getSaltController = new AbortController();
   // const { signal: getSaltSignal } = getSaltController;
 
@@ -114,6 +108,10 @@ function SolveGameSection() {
   //     }
   //   });
   // }
+  //   return () => {
+  //     getSaltController.abort();
+  //   };
+  // }, []);
 
   return (
     <Stack>
@@ -167,7 +165,9 @@ function SolveGameSection() {
         />
       </Center>
       <Container>
-        {!hasJoinerPlayed && <Text> Disabled until joiner plays</Text>}
+        {!hasJoinerPlayed && !isGameOver && (
+          <Text> Disabled until joiner plays</Text>
+        )}
         <Center>
           <Button onClick={solveGame} disabled={!canSolve} my={10}>
             Solve
@@ -176,12 +176,13 @@ function SolveGameSection() {
       </Container>
       {!hasJoinerPlayed && (
         <Stack>
-          {!canTimeout && !winner && <Text>Cannot Timeout yet. Wait </Text>}
+          {!canTimeout && !winner && !timeoutJoinerTxHash && (
+            <Text>Cannot Timeout yet. Wait </Text>
+          )}
 
           <Button disabled={!canTimeout} onClick={timeoutInactiveJoiner}>
-            Time
+            Claim Timeout
           </Button>
-          <Button onClick={timeoutInactiveJoiner}>Claim Timeout</Button>
         </Stack>
       )}
     </Stack>
