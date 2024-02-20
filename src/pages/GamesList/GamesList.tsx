@@ -23,7 +23,7 @@ function GamesList() {
   return (
     <Stack mt={50}>
       {isSignedIn ? (
-        games !== undefined ? (
+        games !== undefined && games.length > 0 ? (
           games.map((game) => (
             <GameItem
               key={game.contractAddress}
