@@ -24,18 +24,12 @@ function GamesList() {
     <Stack mt={50}>
       {isSignedIn ? (
         games !== undefined ? (
-          games.length > 0 ? (
-            games.map((game) => (
-              <GameItem
-                key={game.contractAddress}
-                contractAddress={game.contractAddress}
-              />
-            ))
-          ) : (
-            <Center>
-              <Loader />
-            </Center>
-          )
+          games.map((game) => (
+            <GameItem
+              key={game.contractAddress}
+              contractAddress={game.contractAddress}
+            />
+          ))
         ) : (
           <Container>
             <Text>No games for this user</Text>
