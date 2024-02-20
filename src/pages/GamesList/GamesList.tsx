@@ -10,6 +10,7 @@ function GamesList() {
   const { data: gamesResponse } = useQuery({
     queryKey: ["games-list", address],
     queryFn: async () => await getGamesList(address),
+    refetchInterval: ONE_SECOND,
   });
 
   const games = gamesResponse?.gamesForJoiner;
@@ -70,3 +71,5 @@ interface getGamesListResponse {
 interface Games {
   contractAddress: string;
 }
+
+const ONE_SECOND = 1000;
